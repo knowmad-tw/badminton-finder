@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import time
@@ -20,6 +21,7 @@ from zoneinfo import ZoneInfo
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 OUT_JS = ROOT / "data" / "sessions.js"
 OUT_JSON = ROOT / "data" / "sessions.json"
 
@@ -268,10 +270,18 @@ def main() -> int:
     weekly = dedupe(weekly, lambda r: (r["name"], r["place"], r["day"], r["start"]))
     dated = dedupe(dated, lambda r: (r["name"], r["place"], r["date"], r["start"]))
     rows = weekly + dated
+    geo = {}
+    try:
+        from geocode import geocode_rows  # 同資料夾
+        lim = os.environ.get("GEOCODE_LIMIT")
+        geo = geocode_rows(rows, int(lim) if lim else None)
+    except Exception as e:  # noqa: BLE001  座標查不到不影響主要資料
+        errors.append(f"地理編碼：{e}")
     payload = {
         "generatedAt": datetime.now(TZ).strftime("%Y-%m-%d %H:%M"),
         "errors": errors,
         "counts": {"weekly": len(weekly), "dated": len(dated)},
+        "geo": geo,
         "rows": rows,
     }
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)

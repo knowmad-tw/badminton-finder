@@ -16,6 +16,10 @@ GitHub Actions 每天台灣時間 07:00 跑 `scripts/fetch.py`，資料有變才
 
 ## 畫面
 
+- **網址**：https://knowmad.tw/badminton-finder/（目前設 `noindex`，不讓搜尋引擎收錄）
+- **開場**：程度階梯（點兩格設上下限）＋適合你的團數、最多的時段、資料更新時間
+- **地圖**：場館標在 OpenStreetMap 上，圓點顏色＝該場館最適合你的團，點開看所有時段與 Google 地圖導航；「我附近」用瀏覽器定位
+
 - **星期 × 時段熱度表**：格子裡的大數字＝「很對口＋可以打」的團數；點一格就只列那個時段
 - **當天強度組成**：每一天所有團裡，很對口／可以打／程度很雜／偏弱／偏強各佔多少
 - **兩個分頁**：每週固定團（羽球拼圖）、近期場次（臨打情報站，有日期）
@@ -47,6 +51,13 @@ GitHub Actions 每天台灣時間 07:00 跑 `scripts/fetch.py`，資料有變才
 - 某個來源抓失敗時，沿用上一次的那份資料，網頁上會顯示提醒
 - 同一團重複登記（同名、同場館、同星期、同開始時間）只留最近更新的那筆
 
+## 場館座標
+
+`scripts/geocode.py` 用 OpenStreetMap Nominatim 把場館換成經緯度，結果快取在 `data/geocache.json`（查過不重查）。
+順序：場館名稱＋縣市 → 地址截到路段 → 行政區中心（地圖上虛線框、標「大概位置」）。
+Nominatim 規定每秒最多 1 個請求，第一次全部查完約 30 分鐘；Actions 每天最多新查 120 個（`GEOCODE_LIMIT`）。
+單獨重查：`python3 scripts/geocode.py`；某個場館位置錯了，直接改 `data/geocache.json` 那一筆。
+
 ## 已知限制
 
 - 團主自填，程度、費用、時間可能過期；去之前先私訊確認
@@ -58,8 +69,11 @@ GitHub Actions 每天台灣時間 07:00 跑 `scripts/fetch.py`，資料有變才
 ```
 index.html          網頁（單一檔案，含 CSS/JS）
 scripts/fetch.py    爬蟲
+scripts/geocode.py  場館地址 → 經緯度
+data/geocache.json  座標快取
 data/sessions.js    網頁讀的資料
 data/sessions.json  同一份資料（JSON）
 更新資料.command     雙擊更新
 .github/workflows/update-data.yml  每天自動更新
+robots.txt          不讓搜尋引擎收錄
 ```

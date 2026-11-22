@@ -15,7 +15,7 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -23,7 +23,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 抓資料
+      - name: 抓資料（含新場館座標，每次最多查 120 個）
+        env:
+          GEOCODE_LIMIT: "120"
         run: python3 scripts/fetch.py
 
       - name: 有變動才 commit

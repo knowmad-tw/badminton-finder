@@ -6,199 +6,512 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate">
 <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="bingbot" content="noindex, nofollow, noarchive">
-<meta name="referrer" content="no-referrer">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>羽球找團｜台北・新北・桃園・中壢羽球臨打</title>
 <meta name="description" content="找台北、新北、桃園、中壢的羽球臨打團：一週裡哪天、哪個時段有適合你程度（1–18 級）的團，一張表看完。">
+<meta name="author" content="彭其捷">
+<meta property="og:title" content="羽球找團｜這週哪一天，打得到你的程度？">
+<meta property="og:description" content="台北・新北・桃園・中壢羽球臨打團，依 18 級分級標出哪天哪個時段強度對口。每天自動更新。">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0b3d2e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b3d2e'/%3E%3Cpath d='M20 14 L44 14 L38 40 L26 40 Z' fill='%23fff'/%3E%3Ccircle cx='32' cy='46' r='8' fill='%23f4c542'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
 <style>
 :root{
-  --bg:#f6f5f1; --panel:#ffffff; --ink:#1d2321; --muted:#68716d; --line:#e3e1da;
-  --brand:#0f6b4f; --brand-ink:#ffffff; --brand-soft:#e2f1ea;
-  --great:#0f6b4f; --ok:#5f9c3a; --weak:#b9b4a6; --strong:#b5532f; --mixed:#8a7bb8; --unk:#cfcac0;
-  --heat0:#f1efe9; --heat1:#d7ecdf; --heat2:#a9d6bb; --heat3:#5fae86; --heat4:#0f6b4f;
-  --chip:#efede7; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+  --court-900:#07291f; --court-800:#0b3d2e; --court-700:#11553f; --court-600:#176b50; --court-line:rgba(255,255,255,.78);
+  --shuttle:#f4c542; --shuttle-ink:#3b2c00;
+  --paper:#f6f4ee; --panel:#ffffff; --ink:#16201c; --muted:#5d6a64; --line:#e3e0d7; --chip:#efece4;
+  --great:#12805c; --ok:#7aa84a; --mixed:#8c7fc0; --weak:#bdb8ab; --strong:#c9603a; --unk:#d6d1c5;
+  --heat0:#efece4; --heat1:#d4eadf; --heat2:#9fd3b9; --heat3:#4fa883; --heat4:#12805c;
+  --shadow:0 1px 2px rgba(10,30,20,.05),0 8px 28px rgba(10,30,20,.06);
+  --num:"Barlow Condensed","Noto Sans TC",system-ui,sans-serif;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#141816; --panel:#1c211f; --ink:#e8ece9; --muted:#97a19c; --line:#2d3431;
-  --brand:#3fbf8c; --brand-ink:#0d1411; --brand-soft:#1f3a2f;
-  --great:#3fbf8c; --ok:#8cc263; --weak:#5c605d; --strong:#e07b55; --mixed:#a597d6; --unk:#454b48;
-  --heat0:#222826; --heat1:#20392e; --heat2:#25563f; --heat3:#2f8a62; --heat4:#3fbf8c;
-  --chip:#262c2a; --shadow:none; color-scheme:dark;
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1412; --panel:#151d1a; --ink:#e6ece9; --muted:#97a39d; --line:#26302c; --chip:#1d2623;
+  --great:#3fbf8c; --ok:#9bc96b; --mixed:#a597d6; --weak:#58605c; --strong:#e07b55; --unk:#3d4542;
+  --heat0:#1b2421; --heat1:#1d3a2e; --heat2:#215a42; --heat3:#2b8a62; --heat4:#3fbf8c;
+  --shadow:none; color-scheme:dark;
 }}
+:root[data-theme="dark"]{
+  --paper:#0e1412; --panel:#151d1a; --ink:#e6ece9; --muted:#97a39d; --line:#26302c; --chip:#1d2623;
+  --great:#3fbf8c; --ok:#9bc96b; --mixed:#a597d6; --weak:#58605c; --strong:#e07b55; --unk:#3d4542;
+  --heat0:#1b2421; --heat1:#1d3a2e; --heat2:#215a42; --heat3:#2b8a62; --heat4:#3fbf8c;
+  --shadow:none; color-scheme:dark;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
-.wrap{max-width:1120px;margin:0 auto;padding:20px 16px 60px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;margin-bottom:16px}
-h1{font-size:26px;margin:0;letter-spacing:.02em}
-h1 small{font-size:14px;color:var(--muted);font-weight:400;margin-left:8px}
-.meta{color:var(--muted);font-size:13px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
-.controls{display:grid;gap:12px;margin-bottom:14px}
-.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
-.label{font-size:13px;color:var(--muted);min-width:4.5em}
-.chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:14px;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
-.chip:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-input[type=number],input[type=search],select{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:5px 8px}
-input[type=number]{width:4.2em}
-input[type=search]{flex:1;min-width:180px}
-.tabs{display:flex;gap:6px;margin:4px 0 12px}
-.tab{border:0;background:transparent;font:inherit;font-size:15px;padding:8px 14px;border-radius:10px;cursor:pointer;color:var(--muted)}
-.tab[aria-selected="true"]{background:var(--panel);color:var(--ink);font-weight:600;box-shadow:var(--shadow);border:1px solid var(--line)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 "Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.container{max-width:1160px;margin:0 auto;padding-inline:20px}
+.num{font-family:var(--num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--shuttle);outline-offset:2px}
+
+/* ---------- Header ---------- */
+.site-header{position:sticky;top:0;z-index:50;background:rgba(7,41,31,.82);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid rgba(255,255,255,.08);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.site-header .container{display:flex;align-items:center;gap:20px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:900;font-size:18px;letter-spacing:.06em;white-space:nowrap}
+.brand svg{flex:none}
+.nav{display:flex;gap:4px;margin-left:auto;align-items:center}
+.nav a{text-decoration:none;font-size:14px;padding:6px 12px;border-radius:999px;color:rgba(255,255,255,.78)}
+.nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav .by{color:var(--shuttle);border:1px solid rgba(244,197,66,.45)}
+.nav .by:hover{background:rgba(244,197,66,.14);color:var(--shuttle)}
+@media (max-width:640px){.hide-sm,.nav a.hide-sm{display:none}.site-header .container{gap:10px}}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;color:#fff;background:
+  radial-gradient(1200px 500px at 85% -10%,rgba(244,197,66,.16),transparent 60%),
+  radial-gradient(900px 600px at -10% 110%,rgba(23,107,80,.9),transparent 60%),
+  linear-gradient(180deg,var(--court-800),var(--court-900));
+  padding:56px 0 120px}
+.court{position:absolute;left:50%;bottom:-170px;width:1400px;max-width:none;transform:translateX(-50%) perspective(900px) rotateX(62deg);opacity:.22;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 55%);mask-image:linear-gradient(to bottom,transparent 0%,#000 55%)}
+.court line,.court rect{stroke:var(--court-line);stroke-width:4;fill:none}
+.court .net{stroke:var(--shuttle);stroke-width:5;stroke-dasharray:14 10;opacity:.7}
+.hero .container{position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.18em;color:rgba(255,255,255,.72);text-transform:uppercase}
+.eyebrow::before{content:"";width:28px;height:2px;background:var(--shuttle)}
+.hero h1{font-weight:900;font-size:clamp(34px,6.4vw,68px);line-height:1.12;letter-spacing:.02em;margin:14px 0 16px}
+.hero h1 em{font-style:normal;color:var(--shuttle);position:relative;white-space:nowrap}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.12em;background:var(--shuttle);opacity:.35;border-radius:2px}
+.lead{max-width:640px;font-size:clamp(15px,1.8vw,18px);color:rgba(255,255,255,.82);margin:0 0 30px}
+.lead b{color:#fff;font-weight:700}
+
+.ladder-box{background:rgba(7,41,31,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:18px 18px 14px;max-width:760px}
+.ladder-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:12px}
+.ladder-head .k{font-size:13px;color:rgba(255,255,255,.7);letter-spacing:.08em}
+.ladder-head .v{font-family:var(--num);font-size:34px;font-weight:700;line-height:1;color:var(--shuttle)}
+.ladder-head .v small{font-size:18px;color:rgba(255,255,255,.8);margin-left:4px;font-family:"Noto Sans TC",sans-serif;font-weight:500}
+.ladder-head .hint{font-size:12.5px;color:rgba(255,255,255,.62);margin-left:auto}
+.ladder{display:grid;grid-template-columns:repeat(18,1fr);gap:3px}
+.rung{height:38px;border:0;border-radius:6px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);font-family:var(--num);font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,transform .15s;padding:0}
+.rung:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+.rung[data-on="1"]{background:var(--shuttle);color:var(--shuttle-ink)}
+.rung[data-pick="1"]{outline:2px solid #fff;outline-offset:1px}
+.bands{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.6)}
+.bands span{border-top:1px solid rgba(255,255,255,.25);padding-top:3px;text-align:center;white-space:nowrap;overflow:hidden}
+
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px;max-width:760px}
+.stat{border-left:2px solid var(--shuttle);padding:2px 0 2px 14px}
+.stat .k{font-size:12.5px;color:rgba(255,255,255,.66);letter-spacing:.06em}
+.stat .v{font-family:var(--num);font-size:clamp(26px,3.4vw,38px);font-weight:700;line-height:1.1}
+.stat .v small{font-family:"Noto Sans TC",sans-serif;font-size:14px;font-weight:500;color:rgba(255,255,255,.8);margin-left:4px}
+@media (max-width:560px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}.rung{height:32px;font-size:13px}.bands{font-size:10px}.ladder-head .hint{margin-left:0;width:100%}}
+
+/* ---------- 主內容 ---------- */
+main{position:relative;margin-top:-72px;z-index:2}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.filters{padding:18px 20px;display:grid;gap:14px}
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.flabel{font-size:12.5px;color:var(--muted);letter-spacing:.08em;width:4.5em;flex:none}
+.chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
+.chip:hover{border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.ctl{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 10px}
+.search{flex:1;min-width:200px;padding-left:36px;background:var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23889' stroke-width='2'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l4 4'/%3E%3C/svg%3E") 12px 50% no-repeat}
+.mini{font-size:13.5px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+@media (max-width:560px){.flabel{width:100%}}
+
+.tabs{display:inline-flex;gap:4px;padding:4px;background:var(--chip);border-radius:999px;margin:26px 0 14px}
+.tab{border:0;background:transparent;font-size:15px;padding:8px 18px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--panel);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+
+.sec-title{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;margin:0 0 12px}
+.sec-title h2{font-size:22px;font-weight:900;margin:0;letter-spacing:.02em}
+.sec-title p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 
 /* 熱度表 */
-.heat-wrap{overflow-x:auto;margin-bottom:14px}
-table.heat{border-collapse:separate;border-spacing:4px;width:100%;min-width:560px}
-.heat th{font-size:13px;font-weight:500;color:var(--muted);text-align:center;padding:2px 4px}
-.heat th.day{text-align:left;width:3.5em;color:var(--ink);font-weight:600}
+.heatpanel{padding:20px}
+.heat-wrap{overflow-x:auto;margin:0 -4px}
+table.heat{border-collapse:separate;border-spacing:5px;width:100%;min-width:600px}
+.heat th{font-size:12.5px;font-weight:500;color:var(--muted);text-align:center;padding:0 4px 4px}
+.heat th small{display:block;font-size:11px;opacity:.8}
+.heat th.day{text-align:left;width:3.4em;color:var(--ink);font-weight:700;font-size:14px;line-height:1.3}
 .heat td{padding:0}
-.cell{width:100%;border:0;border-radius:10px;padding:8px 6px;cursor:pointer;font:inherit;color:var(--ink);background:var(--heat0);min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-.cell .n{font-size:20px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
-.cell .s{font-size:11.5px;opacity:.85}
+.cell{position:relative;width:100%;border:0;border-radius:12px;padding:10px 6px;cursor:pointer;background:var(--heat0);min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .15s}
+.cell:hover{transform:scale(1.03)}
+.cell .n{font-family:var(--num);font-size:28px;font-weight:700;line-height:1}
+.cell .s{font-size:11.5px;opacity:.85;margin-top:2px}
 .cell[data-l="1"]{background:var(--heat1)} .cell[data-l="2"]{background:var(--heat2)}
 .cell[data-l="3"]{background:var(--heat3);color:#fff} .cell[data-l="4"]{background:var(--heat4);color:#fff}
-@media (prefers-color-scheme:dark){.cell[data-l="4"]{color:#0d1411}}
-.cell[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:-3px}
-.mix{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--heat0);min-width:120px}
+.cell[data-top="1"]::after{content:"最多";position:absolute;top:-7px;right:-4px;background:var(--shuttle);color:var(--shuttle-ink);font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px}
+.cell[aria-pressed="true"]{box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--ink)}
+.mixcell{min-width:170px;padding:0 0 0 8px!important}
+.mix{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--heat0)}
 .mix span{display:block;height:100%}
-.mixcell{min-width:150px;padding:0 4px !important}
-.mixcap{font-size:11.5px;color:var(--muted);margin-top:3px;white-space:nowrap}
+.mixcap{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap}
+.mixcap b{color:var(--ink);font-family:var(--num);font-size:15px}
+.heatnote{font-size:12.5px;color:var(--muted);margin-top:10px}
 
 /* 清單 */
-.list-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin:18px 0 8px}
-.list-head h2{font-size:17px;margin:0}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:6px;box-shadow:var(--shadow)}
-.card.fit-great{border-left:4px solid var(--great)}
-.card.fit-ok{border-left:4px solid var(--ok)}
-.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
-.name{font-weight:650;font-size:15.5px;line-height:1.35}
-.name a{color:inherit;text-decoration:none}
-.name a:hover{text-decoration:underline}
-.star{border:0;background:transparent;font-size:19px;cursor:pointer;line-height:1;color:var(--weak);padding:0 2px}
+.list-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin:36px 0 14px}
+.list-head h2{font-size:22px;font-weight:900;margin:0}
+.list-head h2 .num{font-size:30px;color:var(--great);margin-right:4px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 16px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px 14px;display:grid;gap:8px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+.card{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(10,30,20,.06),0 14px 34px rgba(10,30,20,.1)}
+.card::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--unk)}
+.card.fit-great::before{background:var(--great)} .card.fit-ok::before{background:var(--ok)} .card.fit-mixed::before{background:var(--mixed)}
+.card.fit-weak::before{background:var(--weak)} .card.fit-strong::before{background:var(--strong)}
+.c-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.when{font-family:var(--num);font-size:24px;font-weight:700;line-height:1.05;letter-spacing:.01em}
+.when small{font-family:"Noto Sans TC",sans-serif;font-size:13px;font-weight:700;color:var(--muted);margin-right:6px;letter-spacing:.04em}
+.name{font-weight:700;font-size:16px;line-height:1.4}
+.name a{text-decoration:none}
+.name a:hover{text-decoration:underline;text-underline-offset:3px}
+.place{color:var(--muted);font-size:13.5px}
+.star{border:0;background:transparent;font-size:22px;cursor:pointer;line-height:1;color:var(--weak);padding:0 2px}
 .star[aria-pressed="true"]{color:#e0a100}
-.sub{color:var(--muted);font-size:13.5px}
-.when{font-weight:600;font-variant-numeric:tabular-nums}
 .tags{display:flex;flex-wrap:wrap;gap:5px}
-.tag{font-size:12px;padding:1px 8px;border-radius:999px;background:var(--chip);color:var(--muted)}
-.tag.fit{color:#fff}
+.tag{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.tag.fit{color:#fff;font-weight:700}
 .tag.great{background:var(--great)} .tag.ok{background:var(--ok)} .tag.weak{background:var(--weak);color:var(--ink)}
 .tag.strong{background:var(--strong)} .tag.mixed{background:var(--mixed)} .tag.unk{background:var(--unk);color:var(--ink)}
 .tag.warn{background:transparent;border:1px dashed var(--strong);color:var(--strong)}
-@media (prefers-color-scheme:dark){.tag.great,.tag.ok{color:#0d1411}}
-.lvbar{position:relative;height:14px;border-radius:7px;background:var(--heat0)}
-.lvbar .me{position:absolute;top:0;bottom:0;background:var(--brand-soft);border-left:1px dashed var(--brand);border-right:1px dashed var(--brand)}
-.lvbar .team{position:absolute;top:3px;bottom:3px;border-radius:4px;background:var(--muted);opacity:.75}
+.lv{margin-top:2px}
+.lvbar{position:relative;height:16px;border-radius:8px;background:var(--heat0)}
+.lvbar .me{position:absolute;top:0;bottom:0;background:rgba(244,197,66,.38);border-radius:8px;box-shadow:inset 0 0 0 1.5px var(--shuttle)}
+.lvbar .team{position:absolute;top:4px;bottom:4px;border-radius:4px;background:var(--muted);opacity:.7}
 .card.fit-great .lvbar .team{background:var(--great);opacity:1}
 .card.fit-ok .lvbar .team{background:var(--ok);opacity:1}
-.lvcap{position:relative;height:14px;font-size:11px;color:var(--muted);margin-top:-3px}
+.lvcap{position:relative;height:14px;font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--num)}
 .lvcap span{position:absolute;transform:translateX(-50%);white-space:nowrap}
 .lvcap span:first-child{transform:none}
 .lvcap span:last-child{transform:translateX(-100%)}
 .note{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.empty{padding:30px;text-align:center;color:var(--muted)}
-.more{display:block;margin:14px auto 0}
-.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
-details.help{margin-top:22px}
-details.help summary{cursor:pointer;color:var(--muted)}
-details.help table{border-collapse:collapse;margin:10px 0;font-size:14px}
-details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;text-align:left}
-.daygroup{margin:16px 0 6px;font-weight:650}
-.warnbar{background:#fff4e5;color:#7a4b00;border:1px solid #f1d3a0;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:14px}
-@media (prefers-color-scheme:dark){.warnbar{background:#3a2c12;color:#f1d3a0;border-color:#5c4620}}
-@media (max-width:520px){h1{font-size:22px}.cards{grid-template-columns:1fr}.label{min-width:auto;width:100%}}
+.src{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+.src a{color:var(--great)}
+.empty{grid-column:1/-1;padding:48px 20px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:16px}
+.more{display:block;margin:20px auto 0}
+.daygroup{grid-column:1/-1;margin:14px 0 0;font-weight:900;font-size:17px;display:flex;align-items:center;gap:10px}
+.daygroup::after{content:"";flex:1;height:1px;background:var(--line)}
+.warnbar{background:#fff4e5;color:#7a4b00;border:1px solid #f1d3a0;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+
+/* 顯示按鈕的數字與說明 */
+.chip .cnt{font-family:var(--num);font-weight:700;font-size:15px;margin-left:6px;opacity:.75}
+.chip[aria-pressed="true"] .cnt{opacity:1}
+.fitdesc{font-size:13px;color:var(--muted);margin:-4px 0 0 calc(4.5em + 10px);line-height:1.7}
+.fitdesc b{color:var(--ink)}
+@media (max-width:560px){.fitdesc{margin-left:0}}
+
+/* 清單／地圖切換 */
+.seg{display:inline-flex;padding:3px;background:var(--chip);border-radius:999px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;cursor:pointer;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+
+/* 地圖 */
+.mapbox{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--heat0)}
+#map{height:min(68vh,620px);min-height:380px}
+.osm-tiles{filter:saturate(.55) contrast(.95)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .osm-tiles{filter:invert(1) hue-rotate(180deg) brightness(.85) saturate(.4)}}
+:root[data-theme="dark"] .osm-tiles{filter:invert(1) hue-rotate(180deg) brightness(.85) saturate(.4)}
+.map-tools{position:absolute;z-index:500;top:12px;right:12px;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.map-tools .btn{box-shadow:var(--shadow)}
+.map-note{position:absolute;z-index:500;left:12px;bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:12.5px;color:var(--muted);box-shadow:var(--shadow);max-width:calc(100% - 24px)}
+.pin{display:grid;place-items:center;border-radius:50%;color:#fff;font-family:var(--num);font-weight:700;font-size:14px;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.pin.approx{border-style:dashed}
+.marker-cluster{background:rgba(17,85,63,.28)!important}
+.marker-cluster div{background:var(--court-700)!important;color:#fff;font-family:var(--num);font-weight:700;font-size:14px;box-shadow:0 0 0 2px #fff}
+.leaflet-popup-content-wrapper{border-radius:14px}
+.leaflet-popup-content{margin:14px 16px;font:13.5px/1.55 "Noto Sans TC",sans-serif;min-width:240px}
+.pop h5{margin:0 0 2px;font-size:15px}
+.pop .addr{color:#5d6a64;font-size:12.5px;margin-bottom:8px}
+.pop .approx{color:#c9603a;font-size:12px;margin-bottom:6px}
+.pop ul{list-style:none;padding:0;margin:0 0 8px;max-height:220px;overflow:auto}
+.pop li{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;padding:6px 0;border-top:1px dashed #e3e0d7}
+.pop li .w{font-family:var(--num);font-weight:700;font-size:15px;white-space:nowrap}
+.pop li .i{min-width:0}
+.pop li a{color:#11553f;font-weight:700;text-decoration:none}
+.pop li .m{color:#5d6a64;font-size:12px}
+.pop .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.pop .nav{display:inline-block;background:#11553f;color:#fff!important;text-decoration:none;padding:5px 12px;border-radius:999px;font-size:13px}
+.navlink{margin-left:6px}
+
+/* 快速日子、卡片動作 */
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 16px}
+.quick .chip{padding:7px 16px;font-weight:500}
+.quick .chip small{font-family:var(--num);font-size:14px;margin-left:6px;opacity:.7}
+.next{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:rgba(244,197,66,.22);color:#8a6400;margin-left:6px;vertical-align:3px;font-family:"Noto Sans TC",sans-serif;letter-spacing:0}
+.next.today{background:var(--shuttle);color:var(--shuttle-ink)}
+.dist{font-family:var(--num);font-weight:600;color:var(--great);white-space:nowrap}
+.c-actions{display:flex;gap:6px;flex-wrap:wrap}
+.c-actions a,.c-actions button{font-size:12.5px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 10px;text-decoration:none;color:var(--ink);cursor:pointer;line-height:1.5}
+.c-actions a:hover,.c-actions button:hover{border-color:var(--great);color:var(--great)}
+.c-actions .primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.c-actions .primary:hover{background:var(--great);border-color:var(--great);color:#fff}
+.empty .acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.kbd{font-family:var(--num);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:900}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.theme-btn{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:999px;width:34px;height:34px;cursor:pointer;font-size:15px;display:grid;place-items:center}
+.theme-btn:hover{background:rgba(255,255,255,.1)}
+.dpct{display:none;font-family:var(--num);font-size:12px;font-weight:600;color:var(--great)}
+@media (max-width:640px){
+  table.heat{min-width:0}
+  .heat .mixcell,.heat th.mixh{display:none}
+  .dpct{display:block}
+  .cell{min-height:56px;padding:8px 2px}
+  .cell .n{font-size:24px}
+  .heatnote{display:none}
+}
+/* 開場的飛行羽球 */
+.flyer{position:absolute;right:6%;top:90px;width:300px;height:220px;pointer-events:none}
+.flyer svg{position:absolute;left:0;top:0;width:34px;height:34px;offset-path:path("M 10 190 C 90 -40, 210 -40, 290 150");offset-rotate:auto 90deg;animation:fly 5.5s cubic-bezier(.45,.05,.55,.95) infinite;opacity:0}
+.flyer .trail{position:absolute;inset:0}
+.flyer .trail path{fill:none;stroke:rgba(244,197,66,.35);stroke-width:2;stroke-dasharray:3 9}
+@keyframes fly{0%{offset-distance:0%;opacity:0}8%{opacity:1}70%{offset-distance:100%;opacity:1}78%,100%{offset-distance:100%;opacity:0}}
+@media (max-width:900px){.flyer{display:none}}
+@media (prefers-reduced-motion:reduce){.flyer{display:none}}
+
+/* 怎麼算 */
+.how{margin:72px 0 0}
+.how-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+@media (max-width:860px){.how-grid{grid-template-columns:1fr}}
+.how .panel{padding:22px}
+.how h3{margin:0 0 12px;font-size:17px}
+.tiers{display:grid;gap:8px}
+.tier{display:grid;grid-template-columns:4.2em 4.4em 1fr;gap:10px;align-items:center;font-size:14px}
+.tier .t{font-weight:700}
+.tier .r{font-family:var(--num);font-size:17px;font-weight:600;color:var(--muted)}
+.tier .d{color:var(--muted)}
+.tier.me .t,.tier.me .r{color:var(--great)}
+.tier.me{background:rgba(244,197,66,.16);border-radius:8px;margin:0 -8px;padding:4px 8px}
+.rules{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:14px}
+.rules .tag{margin-top:2px}
+
+/* ---------- Footer ---------- */
+footer{margin-top:80px;background:var(--court-900);color:rgba(255,255,255,.78);padding:56px 0 calc(28px + env(safe-area-inset-bottom,0px));position:relative;overflow:hidden}
+
+footer .container{position:relative}
+.f-grid{display:grid;grid-template-columns:1.1fr 1.3fr 1fr;gap:36px}
+@media (max-width:860px){.f-grid{grid-template-columns:1fr}}
+footer h4{color:#fff;font-size:14px;letter-spacing:.14em;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+footer h4::before{content:"";width:16px;height:2px;background:var(--shuttle)}
+footer p,footer li{font-size:13.5px;line-height:1.75}
+footer ul,footer ol{margin:0;padding-left:1.2em}
+footer a{color:#fff;text-underline-offset:3px}
+footer a:hover{color:var(--shuttle)}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);font-family:var(--num);font-weight:700;font-size:15px;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--shuttle);color:var(--shuttle);display:grid;place-items:center}
+.f-bottom{margin-top:44px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center;font-size:13px}
+.f-bottom .copy{color:rgba(255,255,255,.62);max-width:760px}
+.f-bottom .copy strong{color:#fff}
+.f-links{display:flex;gap:16px;flex-wrap:wrap}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>羽球找團<small>台北・新北・桃園・中壢</small></h1>
-    <div class="meta" id="meta"></div>
-  </header>
-  <div id="warn"></div>
 
-  <section class="panel controls" aria-label="篩選">
-    <div class="row">
-      <span class="label">我的程度</span>
-      <input type="number" id="lvA" min="1" max="18" aria-label="最低級數"> 到
-      <input type="number" id="lvB" min="1" max="18" aria-label="最高級數"> 級
-      <span class="meta" id="lvName"></span>
-    </div>
-    <div class="row" id="regions"><span class="label">地區</span></div>
-    <div class="row" id="fits"><span class="label">顯示</span></div>
-    <div class="row">
-      <span class="label">其他</span>
-      <label class="meta" id="freshWrap">團頁最後更新 <select id="fresh"><option value="12">1 年內</option><option value="6">半年內</option><option value="3">3 個月內</option><option value="0">不限</option></select></label>
-      <label class="meta">費用上限 <input type="number" id="feeMax" min="0" step="10" placeholder="不限" style="width:5.5em"> 元</label>
-      <label class="meta"><input type="checkbox" id="favOnly"> 只看收藏</label>
-    </div>
-    <div class="row"><input type="search" id="q" placeholder="搜尋團名、場館、區（例：中壢運動中心、板橋）" aria-label="搜尋"></div>
-  </section>
-
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-weekly" aria-selected="true">每週固定團</button>
-    <button class="tab" role="tab" id="tab-dated" aria-selected="false">近期場次（有日期）</button>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="羽球找團 回到頂端">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#11553f"/><path d="M20 12 L44 12 L38 40 L26 40 Z" fill="#fff"/><path d="M27 12 L29.5 40 M37 12 L34.5 40 M32 12 V40" stroke="#11553f" stroke-width="1.5"/><circle cx="32" cy="46" r="8" fill="#f4c542"/></svg>
+      羽球找團
+    </a>
+    <nav class="nav" aria-label="主選單">
+      <a href="#find">找團</a>
+      <a href="#listTitle" id="navMap" class="hide-sm">地圖</a>
+      <a href="#how" class="hide-sm">怎麼算</a>
+      <a href="#data" class="hide-sm">資料來源</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="切換深淺色" title="切換深淺色">◐</button>
+      <a class="by" href="https://www.visualization.tw/" target="_blank" rel="noopener">by 彭其捷</a>
+    </nav>
   </div>
+</header>
 
-  <section id="heatSec">
-    <div class="panel">
-      <div class="row" style="justify-content:space-between;margin-bottom:6px">
-        <strong id="heatTitle">一週裡，哪天有適合我的強度</strong>
+<section class="hero" id="top">
+  <svg class="court" viewBox="-10 -10 1360 630" aria-hidden="true">
+    <rect x="0" y="0" width="1340" height="610"/>
+    <line x1="0" y1="46" x2="1340" y2="46"/><line x1="0" y1="564" x2="1340" y2="564"/>
+    <line x1="472" y1="0" x2="472" y2="610"/><line x1="868" y1="0" x2="868" y2="610"/>
+    <line x1="76" y1="0" x2="76" y2="610"/><line x1="1264" y1="0" x2="1264" y2="610"/>
+    <line x1="0" y1="305" x2="472" y2="305"/><line x1="868" y1="305" x2="1340" y2="305"/>
+    <line class="net" x1="670" y1="-10" x2="670" y2="620"/>
+  </svg>
+  <div class="container">
+    <div class="flyer" aria-hidden="true">
+      <svg class="trail" viewBox="0 0 300 220"><path d="M 10 190 C 90 -40, 210 -40, 290 150"/></svg>
+      <svg viewBox="0 0 64 64"><path d="M20 6 L44 6 L38 36 L26 36 Z" fill="#fff"/><path d="M27 6 L29.5 36 M37 6 L34.5 36 M32 6 V36" stroke="#cfd8d3" stroke-width="1.5"/><circle cx="32" cy="44" r="9" fill="#f4c542"/></svg>
+    </div>
+    <div class="eyebrow">台北・新北・桃園・中壢｜羽球臨打</div>
+    <h1>這週哪一天，<br>打得到<em>你的程度</em>？</h1>
+    <p class="lead" id="lead">整理羽球臨打團的時間與程度，依你的級數標出哪天、哪個時段有強度對口的團。</p>
+
+    <div class="ladder-box">
+      <div class="ladder-head">
+        <span class="k">我的程度</span>
+        <span class="v" id="lvShow">10–12<small>級・中上</small></span>
+        <span class="hint" id="lvHint">點一格設下限，再點一格設上限</span>
+      </div>
+      <div class="ladder" id="ladder" role="group" aria-label="選擇程度 1 到 18 級"></div>
+      <div class="bands" aria-hidden="true">
+        <span style="grid-column:1/4">新手</span><span style="grid-column:4/6">初級</span><span style="grid-column:6/8">中下</span>
+        <span style="grid-column:8/10">中等</span><span style="grid-column:10/13">中上</span><span style="grid-column:13/19">高級</span>
+      </div>
+    </div>
+
+    <div class="stats" aria-live="polite">
+      <div class="stat"><div class="k">適合你的團</div><div class="v" id="sFit">—</div></div>
+      <div class="stat"><div class="k">最多的時段</div><div class="v" id="sTop">—</div></div>
+      <div class="stat"><div class="k">資料更新</div><div class="v" id="sUpd">—</div></div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+    <div id="warn"></div>
+
+    <section class="panel filters" id="find" aria-label="篩選條件">
+      <div class="frow" id="regions"><span class="flabel">地區</span></div>
+      <div class="frow" id="fits"><span class="flabel">顯示</span></div>
+      <div class="fitdesc" id="fitDesc"></div>
+      <div class="frow">
+        <span class="flabel">其他</span>
+        <label class="mini" id="freshWrap">團頁最後更新
+          <select id="fresh" class="ctl"><option value="12">1 年內</option><option value="6">半年內</option><option value="3">3 個月內</option><option value="0">不限</option></select>
+        </label>
+        <label class="mini">費用上限 <input type="number" id="feeMax" class="ctl" min="0" step="10" placeholder="不限" style="width:6em"> 元</label>
+        <label class="mini"><input type="checkbox" id="favOnly"> 只看收藏</label>
+      </div>
+      <div class="frow"><input type="search" id="q" class="ctl search" placeholder="搜尋團名、場館、區（例：中壢運動中心、板橋）" aria-label="搜尋"><button class="btn" id="share" type="button">🔗 分享這組條件</button><span class="mini hide-sm">按 <span class="kbd">/</span> 直接搜尋</span></div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="資料類型">
+      <button class="tab" role="tab" id="tab-weekly" aria-selected="true">每週固定團</button>
+      <button class="tab" role="tab" id="tab-dated" aria-selected="false">近期場次</button>
+    </div>
+
+    <section class="panel heatpanel" aria-labelledby="heatTitle">
+      <div class="sec-title">
+        <div>
+          <h2 id="heatTitle">一週強度地圖</h2>
+          <p id="heatSub">格子裡的數字＝很對口＋可以打的團數，點一格只看那個時段</p>
+        </div>
         <div class="legend">
-          <span><i class="dot" style="background:var(--great)"></i>很對口</span>
-          <span><i class="dot" style="background:var(--ok)"></i>可以打</span>
-          <span><i class="dot" style="background:var(--mixed)"></i>程度很雜</span>
-          <span><i class="dot" style="background:var(--weak)"></i>偏弱</span>
-          <span><i class="dot" style="background:var(--strong)"></i>偏強</span>
+          <span><i style="background:var(--great)"></i>很對口</span>
+          <span><i style="background:var(--ok)"></i>可以打</span>
+          <span><i style="background:var(--mixed)"></i>程度很雜</span>
+          <span><i style="background:var(--weak)"></i>偏弱</span>
+          <span><i style="background:var(--strong)"></i>偏強</span>
         </div>
       </div>
       <div class="heat-wrap"><table class="heat" id="heat"></table></div>
-      <div class="meta">格子裡的大數字＝「很對口＋可以打」的團數，點一下就只列那個時段；最右邊那條是當天所有團的強度組成。</div>
-    </div>
-  </section>
+      <div class="heatnote">最右邊那條是當天所有團的強度組成。</div>
+    </section>
 
-  <div class="list-head">
-    <h2 id="listTitle"></h2>
-    <div class="row">
-      <label class="meta">排序
-        <select id="sort">
-          <option value="fit">適合度</option>
-          <option value="time">星期與時間</option>
-          <option value="fee">費用低到高</option>
-          <option value="updated">最近更新</option>
-        </select>
-      </label>
-      <button class="btn" id="clearCell" hidden>清除時段篩選</button>
+    <div class="list-head">
+      <h2 id="listTitle"></h2>
+      <div class="frow">
+        <label class="mini">排序
+          <select id="sort" class="ctl">
+            <option value="fit">適合度</option>
+            <option value="time">最近開打</option>
+            <option value="dist">離我最近</option>
+            <option value="fee">費用低到高</option>
+            <option value="updated">最近更新</option>
+          </select>
+        </label>
+        <button class="btn" id="clearCell" hidden>× 清除時段</button>
+        <div class="seg" role="group" aria-label="檢視方式">
+          <button type="button" id="v-list" aria-pressed="true">清單</button>
+          <button type="button" id="v-map" aria-pressed="false">地圖</button>
+        </div>
+      </div>
+    </div>
+    <div class="quick" id="quick" role="group" aria-label="快速選日子"></div>
+    <div id="listView">
+      <div class="cards" id="cards"></div>
+      <button class="btn more" id="more" hidden>再顯示 60 團</button>
+    </div>
+    <div id="mapView" hidden>
+      <div class="mapbox">
+        <div id="map" role="region" aria-label="球場地圖"></div>
+        <div class="map-tools"><button class="btn" id="locate" type="button">◎ 我附近</button></div>
+        <div class="map-note" id="mapNote"></div>
+      </div>
+    </div>
+
+    <section class="how" id="how">
+      <div class="sec-title"><div><h2>適合度怎麼算</h2><p>台灣臨打常用台灣羽球推廣協會的 18 級分級表</p></div></div>
+      <div class="how-grid">
+        <div class="panel">
+          <h3>分級對照</h3>
+          <div class="tiers" id="tiers"></div>
+        </div>
+        <div class="panel">
+          <h3>以你設定的程度為準</h3>
+          <ul class="rules">
+            <li><span class="tag fit great">很對口</span><span>團的範圍有涵蓋你，而且下限不低於「你的下限 − 2」。打起來有強度。</span></li>
+            <li><span class="tag fit ok">可以打</span><span>有涵蓋你，但也收比較弱的人，強度要看當天分組。</span></li>
+            <li><span class="tag fit mixed">程度很雜</span><span>範圍跨 12 級以上（例如 1–18、6–18），或只寫「不限」。</span></li>
+            <li><span class="tag fit weak">偏弱</span><span>團的最高級數低於你的下限。</span></li>
+            <li><span class="tag fit strong">偏強</span><span>團的最低級數高於你的上限。</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer id="data">
+  <div class="container">
+    <div class="f-grid">
+      <div>
+        <h4>資料來源與致謝</h4>
+        <p>團的資料來自兩個羽球開團平台，謝謝平台的維護者，也謝謝每一位願意把時間、程度寫清楚的團主。</p>
+        <ul>
+          <li><a href="https://badminton.pintu.tw/" target="_blank" rel="noopener">羽球拼圖</a>：每週固定團</li>
+          <li><a href="https://www.farreaching.com.tw/badminton/" target="_blank" rel="noopener">羽球臨打情報站</a>：近期有日期的場次</li>
+          <li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>：地圖與場館座標（ODbL）</li>
+          <li><a href="https://badminton-tw.com/casual-play-level/" target="_blank" rel="noopener">18 級分級表白話對照</a>：分級說明參考</li>
+        </ul>
+      </div>
+      <div>
+        <h4>資料怎麼取得</h4>
+        <ol class="steps">
+          <li><span>每天台灣時間 07:00，GitHub Actions 呼叫兩個平台公開的查詢 API（不用登入），一次更新只發 4 個請求，不會造成對方負擔。</span></li>
+          <li><span>只留台北市、新北市、桃園市；桃園市中壢區另列為「中壢」。同名、同場館、同時段的重複登記只留最新一筆。</span></li>
+          <li><span>「初級、中下、中等」這類文字程度換算成級數；備註裡的 LINE ID、電話、Email、網址在存檔前自動遮掉。</span></li>
+          <li><span>場館位置用 OpenStreetMap 的 Nominatim 由場館名稱或地址換算，查過就存起來不重複查；找不到精確位置的，標在行政區中心並註明。</span></li>
+          <li><span>整理好的資料連同網頁放在 <a href="https://github.com/knowmad-tw/badminton-finder" target="_blank" rel="noopener">GitHub</a>，程式碼公開可查。</span></li>
+        </ol>
+      </div>
+      <div>
+        <h4>使用前請注意</h4>
+        <p>時間、費用、程度由團主自行填寫，可能已經改了或停團。報名前請點卡片連到原網頁，跟團主確認。</p>
+        <p>本站與上述平台沒有合作關係，只整理摘要並連回原網頁。團主如果不希望出現在這裡，請到 <a href="https://github.com/knowmad-tw/badminton-finder/issues" target="_blank" rel="noopener">GitHub Issues</a> 留言，會盡快移除。</p>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <div class="copy">© <span id="year">2026</span> <strong>彭其捷</strong>。網站設計與程式碼著作權屬彭其捷所有。團的名稱、時間、程度、備註等內容，著作權屬原平台與各團主所有，本站僅作非商業的整理與索引。</div>
+      <div class="f-links">
+        <a href="https://www.visualization.tw/" target="_blank" rel="noopener">visualization.tw</a>
+        <a href="https://github.com/knowmad-tw/badminton-finder" target="_blank" rel="noopener">GitHub</a>
+        <a href="#top">回到頂端 ↑</a>
+      </div>
     </div>
   </div>
-  <div class="cards" id="cards"></div>
-  <button class="btn more" id="more" hidden>再顯示 60 筆</button>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <details class="help">
-    <summary>分級對照、適合度怎麼算、資料從哪來</summary>
-    <p>台灣臨打常用台灣羽球推廣協會的 18 級分級表。羽球拼圖的文字程度對應如下：</p>
-    <table>
-      <tr><th>文字</th><th>級數</th><th>白話</th></tr>
-      <tr><td>新手</td><td>1–3</td><td>剛接觸，能來回幾拍</td></tr>
-      <tr><td>初級</td><td>4–5</td><td>握拍正確、長球到中後場</td></tr>
-      <tr><td>中下</td><td>6–7</td><td>會輪轉，開始會殺、切</td></tr>
-      <tr><td>中等</td><td>8–9</td><td>有戰術、球路七成以上準</td></tr>
-      <tr><td>中上</td><td>10–12</td><td>球路穩、有攻擊力（臨打圈的上層）</td></tr>
-      <tr><td>高級</td><td>13–18</td><td>校隊、甲組、選手</td></tr>
-    </table>
-    <p><b>適合度</b>（以你設定的程度為準）：</p>
-    <ul>
-      <li><b>很對口</b>：團的範圍有涵蓋你，而且下限不低於「你的下限 − 2」（10 級的話，就是 8 級以上才收）。打起來有強度。</li>
-      <li><b>可以打</b>：有涵蓋你，但也收比較弱的人，可能要看當天分組。</li>
-      <li><b>程度很雜</b>：範圍跨 12 級以上（例如 1–18、6–18），或寫「不限」。</li>
-      <li><b>偏弱／偏強</b>：團的最高級數低於你的下限，或最低級數高於你的上限。</li>
-    </ul>
-    <p>資料來源：<a href="https://badminton.pintu.tw/" target="_blank" rel="noopener">羽球拼圖</a>（每週固定團）、<a href="https://www.farreaching.com.tw/badminton/" target="_blank" rel="noopener">羽球臨打情報站</a>（近期場次）。團主自填，程度、費用、時間以團主最新公告為準；去之前請先私訊確認。更新資料：雙擊專案裡的「更新資料.command」。</p>
-  </details>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script src="data/sessions.js"></script>
 <script>
 (() => {
@@ -211,45 +524,71 @@ details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;te
     {k:"weak",t:"偏弱"},{k:"strong",t:"偏強"},{k:"unk",t:"沒標程度"}
   ];
   const FIT_RANK = {great:0, ok:1, mixed:2, unk:3, weak:4, strong:5};
-  const LV_NAMES = [[1,3,"新手"],[4,5,"初級"],[6,7,"中下"],[8,9,"中等"],[10,12,"中上"],[13,18,"高級"]];
+  const LV_NAMES = [[1,3,"新手","剛接觸，能來回幾拍"],[4,5,"初級","握拍正確、長球到中後場"],[6,7,"中下","會輪轉，開始會殺、切"],[8,9,"中等","有戰術，球路七成以上準"],[10,12,"中上","球路穩、有攻擊力，臨打圈的上層"],[13,18,"高級","校隊、甲組、選手"]];
 
   const KEY = "badminton-finder:v1";
-  const defaults = {lvA:10, lvB:12, regions:[...REGIONS], fits:["great","ok"], fresh:"12", feeMax:"", favOnly:false, q:"", tab:"weekly", sort:"fit", favs:[]};
+  const defaults = {lvA:10, lvB:12, regions:[...REGIONS], fits:["great","ok"], fresh:"12", feeMax:"", favOnly:false, q:"", tab:"weekly", sort:"fit", favs:[], view:"list"};
   let st = {...defaults};
   try { st = {...defaults, ...JSON.parse(localStorage.getItem(KEY) || "{}")}; } catch {}
-  let cell = null; // {d, s}
-  let shown = 60;
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch {} };
+  if (typeof st.fresh !== "string") st.fresh = "12";
+  let cell = null, shown = 60, pick = null, quick = null, myPos = null, focusKey = null;
+  // 網址帶條件：#lv=10-12&r=台北,中壢&t=dated&v=map
+  try {
+    const h = new URLSearchParams(location.hash.slice(1));
+    const lv = (h.get("lv") || "").match(/^(\d{1,2})-(\d{1,2})$/);
+    if (lv) { st.lvA = Math.max(1, Math.min(18, +lv[1])); st.lvB = Math.max(1, Math.min(18, +lv[2])); }
+    if (h.get("r")) { const rs = h.get("r").split(",").filter(x => REGIONS.includes(x)); if (rs.length) st.regions = rs; }
+    if (["weekly","dated"].includes(h.get("t"))) st.tab = h.get("t");
+    if (["list","map"].includes(h.get("v"))) st.view = h.get("v");
+  } catch {}
+  const save = () => {
+    try { localStorage.setItem(KEY, JSON.stringify(st)); } catch {}
+    try { history.replaceState(null, "", "#" + shareHash()); } catch {}
+  };
+  const shareHash = () => `lv=${Math.min(st.lvA, st.lvB)}-${Math.max(st.lvA, st.lvB)}&r=${st.regions.join(",")}&t=${st.tab}&v=${st.view}`;
+  const toast = msg => { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), 2200); };
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-
   const today = new Date(); today.setHours(0,0,0,0);
   const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
   const monthsAgo = m => { const d = new Date(today); d.setMonth(d.getMonth() - m); return iso(d); };
-  const staleCut = monthsAgo(6); // 卡片上「很久沒更新」的提醒門檻
-  if (typeof st.fresh !== "string") st.fresh = "12"; // 舊版存的是 true/false
+  const staleCut = monthsAgo(6);
+  const lvRange = () => [Math.min(st.lvA, st.lvB), Math.max(st.lvA, st.lvB)];
 
   function slotOf(t) { const h = parseInt((t||"").slice(0,2), 10); if (isNaN(h)) return "ev"; return h < 12 ? "am" : h < 18 ? "pm" : "ev"; }
   function fitOf(r) {
-    const a = Math.min(st.lvA, st.lvB), b = Math.max(st.lvA, st.lvB);
+    const [a, b] = lvRange();
     if (r.lvMin == null || r.lvMax == null) return /不限/.test(r.lvText) ? "mixed" : "unk";
     if (r.lvMax - r.lvMin >= 12) return "mixed";
     if (r.lvMax < a) return "weak";
     if (r.lvMin > b) return "strong";
     return r.lvMin >= a - 2 ? "great" : "ok";
   }
-  function lvName(a, b) {
-    return LV_NAMES.filter(([x,y]) => y >= a && x <= b).map(n => n[2]).join("～") || "";
+  const lvName = (a, b) => LV_NAMES.filter(([x,y]) => y >= a && x <= b).map(n => n[2]).join("～");
+
+  // ---------- 程度階梯 ----------
+  const ladder = $("ladder");
+  for (let v = 1; v <= 18; v++) {
+    const b = document.createElement("button");
+    b.className = "rung"; b.type = "button"; b.textContent = v; b.dataset.v = v;
+    b.setAttribute("aria-label", `${v} 級`);
+    b.addEventListener("click", () => {
+      if (pick == null) { pick = v; st.lvA = st.lvB = v; }
+      else { st.lvA = Math.min(pick, v); st.lvB = Math.max(pick, v); pick = null; }
+      save(); shown = 60; render();
+    });
+    ladder.appendChild(b);
   }
 
   // ---------- 控制項 ----------
+  const SW = {great:"var(--great)",ok:"var(--ok)",mixed:"var(--mixed)",weak:"var(--weak)",strong:"var(--strong)",unk:"var(--unk)"};
   function chips(container, items, key) {
     const box = $(container);
     items.forEach(it => {
       const b = document.createElement("button");
-      b.className = "chip"; b.type = "button";
-      b.textContent = it.t ?? it; b.dataset.k = it.k ?? it;
+      b.className = "chip"; b.type = "button"; b.dataset.k = it.k ?? it;
+      b.innerHTML = (it.k ? `<span class="sw" style="background:${SW[it.k]}"></span>` : "") + `<span class="lbl">${esc(it.t ?? it)}</span><span class="cnt"></span>`;
       b.addEventListener("click", () => {
         const k = b.dataset.k, arr = st[key];
         st[key] = arr.includes(k) ? arr.filter(x => x !== k) : [...arr, k];
@@ -261,30 +600,25 @@ details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;te
   chips("regions", REGIONS, "regions");
   chips("fits", FITS, "fits");
 
-  const bindVal = (id, key, num) => {
+  const bindVal = (id, key) => {
     const el = $(id);
     if (el.type === "checkbox") el.checked = !!st[key]; else el.value = st[key];
-    el.addEventListener(el.type === "checkbox" ? "change" : "input", () => {
-      let v = el.type === "checkbox" ? el.checked : el.value;
-      if (num) { v = Math.max(1, Math.min(18, parseInt(v, 10) || defaults[key])); }
-      st[key] = v; save(); shown = 60; render();
+    el.addEventListener(el.type === "checkbox" || el.tagName === "SELECT" ? "change" : "input", () => {
+      st[key] = el.type === "checkbox" ? el.checked : el.value; save(); shown = 60; render();
     });
   };
-  bindVal("lvA","lvA",true); bindVal("lvB","lvB",true);
-  $("fresh").value = st.fresh;
-  $("fresh").addEventListener("change", () => { st.fresh = $("fresh").value; save(); shown = 60; render(); });
-  bindVal("feeMax","feeMax"); bindVal("favOnly","favOnly"); bindVal("q","q"); bindVal("sort","sort");
-
+  ["fresh","feeMax","favOnly","q","sort"].forEach(k => bindVal(k, k));
+  $("sort").addEventListener("change", () => { if ($("sort").value === "dist" && !myPos) locate(); });
   ["weekly","dated"].forEach(t => $("tab-"+t).addEventListener("click", () => { st.tab = t; cell = null; shown = 60; save(); render(); }));
   $("clearCell").addEventListener("click", () => { cell = null; render(); });
   $("more").addEventListener("click", () => { shown += 60; renderCards(lastList); });
 
   // ---------- 篩選 ----------
-  function baseFilter(r) {
-    if (r.kind !== st.tab) return false;
+  function baseFilter(r, tab = st.tab) {
+    if (r.kind !== tab) return false;
     if (!st.regions.includes(r.region)) return false;
     const fm0 = parseInt(st.fresh, 10);
-    if (st.tab === "weekly" && fm0 > 0 && r.updated && r.updated < monthsAgo(fm0)) return false;
+    if (tab === "weekly" && fm0 > 0 && r.updated && r.updated < monthsAgo(fm0)) return false;
     const fm = parseInt(st.feeMax, 10);
     if (fm > 0 && r.fee && r.fee > fm) return false;
     if (st.favOnly && !st.favs.includes(r.id)) return false;
@@ -294,32 +628,39 @@ details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;te
   }
 
   // ---------- 熱度表 ----------
-  function renderHeat(rows) {
-    const grid = DAYS.map(() => ({am:0, pm:0, ev:0, greatAm:0, greatPm:0, greatEv:0, mix:{}}));
+  function buildGrid(rows) {
+    const grid = DAYS.map(() => ({am:0, pm:0, ev:0, g:{am:0,pm:0,ev:0}, mix:{}}));
     rows.forEach(r => {
       const f = r._fit, g = grid[r.day], s = slotOf(r.start);
       g.mix[f] = (g.mix[f] || 0) + 1;
-      if (f === "great" || f === "ok") {
-        g[s]++;
-        if (f === "great") g["great" + s[0].toUpperCase() + s.slice(1)]++;
-      }
+      if (f === "great" || f === "ok") { g[s]++; if (f === "great") g.g[s]++; }
     });
+    return grid;
+  }
+  function topSlot(grid) {
+    let best = null;
+    grid.forEach((g, d) => SLOTS.forEach(s => { if (g[s.k] > 0 && (!best || g[s.k] > best.n)) best = {d, s:s.k, t:s.t, n:g[s.k]}; }));
+    return best;
+  }
+  function renderHeat(grid) {
     const max = Math.max(1, ...grid.flatMap(g => [g.am, g.pm, g.ev]));
     const lvl = n => n === 0 ? 0 : Math.min(4, 1 + Math.floor((n / max) * 3.999));
-    let h = `<tr><th></th>${SLOTS.map(s => `<th>${s.t}<br><span style="font-size:11px">${s.r}</span></th>`).join("")}<th>當天強度組成</th></tr>`;
+    const top = topSlot(grid);
+    let h = `<tr><th></th>${SLOTS.map(s => `<th>${s.t}<small>${s.r}</small></th>`).join("")}<th class="mixh" style="text-align:left;padding-left:12px">當天強度組成</th></tr>`;
     grid.forEach((g, d) => {
-      h += `<tr><th class="day">${DAYS[d]}</th>`;
+      const allN0 = Object.values(g.mix).reduce((a,b) => a+b, 0);
+      const pct0 = allN0 ? Math.round(((g.mix.great||0)+(g.mix.ok||0))/allN0*100) : 0;
+      h += `<tr><th class="day">${DAYS[d]}<span class="dpct">${pct0}%</span></th>`;
       SLOTS.forEach(s => {
-        const n = g[s.k], gr = g["great" + s.k[0].toUpperCase() + s.k.slice(1)];
+        const n = g[s.k], gr = g.g[s.k];
         const on = cell && cell.d === d && cell.s === s.k;
-        h += `<td><button class="cell" data-l="${lvl(n)}" data-d="${d}" data-s="${s.k}" aria-pressed="${on}" aria-label="${DAYS[d]}${s.t}：很對口 ${gr} 團、可以打 ${n-gr} 團"><span class="n">${n}</span><span class="s">${n ? `很對口 ${gr}` : "—"}</span></button></td>`;
+        const isTop = top && top.d === d && top.s === s.k;
+        h += `<td><button class="cell" data-l="${lvl(n)}" data-top="${isTop ? 1 : 0}" data-d="${d}" data-s="${s.k}" aria-pressed="${on}" aria-label="${DAYS[d]}${s.t}：很對口 ${gr} 團、可以打 ${n-gr} 團"><span class="n">${n}</span><span class="s">${n ? `很對口 ${gr}` : "—"}</span></button></td>`;
       });
-      const tot = Object.values(g.mix).reduce((a,b) => a+b, 0) || 1;
-      const order = ["great","ok","mixed","unk","weak","strong"];
-      const bar = order.map(k => g.mix[k] ? `<span style="width:${g.mix[k]/tot*100}%;background:var(--${k})" title="${FITS.find(f=>f.k===k).t} ${g.mix[k]} 團"></span>` : "").join("");
-      const allN = Object.values(g.mix).reduce((a,b)=>a+b,0);
+      const allN = Object.values(g.mix).reduce((a,b) => a+b, 0);
+      const bar = ["great","ok","mixed","unk","weak","strong"].map(k => g.mix[k] ? `<span style="width:${g.mix[k]/allN*100}%;background:var(--${k})" title="${FITS.find(f=>f.k===k).t} ${g.mix[k]} 團"></span>` : "").join("");
       const pct = allN ? Math.round(((g.mix.great||0)+(g.mix.ok||0))/allN*100) : 0;
-      h += `<td class="mixcell"><div class="mix">${bar}</div><div class="mixcap">共 ${allN} 團，${pct}% 適合你</div></td></tr>`;
+      h += `<td class="mixcell"><div class="mix">${bar}</div><div class="mixcap"><b>${pct}%</b> 適合你・共 ${allN} 團</div></td></tr>`;
     });
     $("heat").innerHTML = h;
     $("heat").querySelectorAll(".cell").forEach(b => b.addEventListener("click", () => {
@@ -330,16 +671,61 @@ details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;te
     }));
   }
 
+  // ---------- 下次開打、距離 ----------
+  const now = new Date();
+  const todayIdx = (now.getDay() + 6) % 7; // 週一＝0
+  const nowHM = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  function daysUntil(r) {
+    if (r.kind === "dated") return Math.round((new Date(r.date + "T00:00:00") - today) / 864e5);
+    let d = (r.day - todayIdx + 7) % 7;
+    if (d === 0 && (r.end || r.start || "") < nowHM && (r.end || "") > (r.start || "")) d = 7; // 今天已經打完
+    return d;
+  }
+  function nextLabel(r) {
+    const d = daysUntil(r);
+    if (d === 0) return {t: "今天", cls: "today"};
+    if (d === 1) return {t: "明天", cls: ""};
+    if (d === 2) return {t: "後天", cls: ""};
+    if (r.kind === "dated") return null;
+    const x = new Date(today); x.setDate(x.getDate() + d);
+    return {t: `${x.getMonth() + 1}/${x.getDate()}`, cls: ""};
+  }
+  function distKm(r) {
+    if (!myPos || r.lat == null) return null;
+    const R = 6371, toR = Math.PI / 180;
+    const dLat = (r.lat - myPos[0]) * toR, dLng = (r.lng - myPos[1]) * toR;
+    const a = Math.sin(dLat/2) ** 2 + Math.cos(myPos[0]*toR) * Math.cos(r.lat*toR) * Math.sin(dLng/2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+  // 週末：接下來的週六、週日；今天是週日的話，今天還沒打的＋下週六、日
+  const weekendDays = () => todayIdx === 6 ? [0, 6, 7] : [5 - todayIdx, 6 - todayIdx];
+  function quickMatch(r) {
+    if (!quick) return true;
+    const d = daysUntil(r);
+    if (quick === "today") return d === 0;
+    if (quick === "tomorrow") return d === 1;
+    if (quick === "weekend") return weekendDays().includes(d);
+    return true;
+  }
+  function locate(then) {
+    if (!navigator.geolocation) { toast("這個瀏覽器不支援定位"); return; }
+    toast("定位中…");
+    navigator.geolocation.getCurrentPosition(p => {
+      myPos = [p.coords.latitude, p.coords.longitude];
+      toast("已定位，卡片會顯示距離");
+      then && then();
+      render();
+    }, () => toast("沒有取得定位權限，可以在瀏覽器網址列旁開啟"), {timeout: 10000, maximumAge: 300000});
+  }
+
   // ---------- 卡片 ----------
   let lastList = [];
   function card(r) {
-    const a = Math.min(st.lvA, st.lvB), b = Math.max(st.lvA, st.lvB);
+    const [a, b] = lvRange();
     const pos = v => ((v - 1) / 18 * 100).toFixed(2) + "%", wid = (x, y) => ((y - x + 1) / 18 * 100).toFixed(2) + "%";
     const fit = FITS.find(f => f.k === r._fit);
-    const lv = r.lvMin != null ? `${r.lvMin}–${r.lvMax} 級` : (r.lvText || "未標");
-    const when = r.kind === "dated"
-      ? `${r.date.slice(5).replace("-","/")}（${DAYS[r.day].slice(1)}） ${r.start || ""}–${r.end || ""}`
-      : `${DAYS[r.day]} ${r.start || ""}–${r.end || ""}`;
+    const lv = r.lvMin != null ? `${r.lvMin}–${r.lvMax} 級` : (r.lvText || "未標程度");
+    const dayLbl = r.kind === "dated" ? `${r.date.slice(5).replace("-","/")} ${DAYS[r.day]}` : DAYS[r.day];
     const fav = st.favs.includes(r.id);
     const stale = r.kind === "weekly" && r.updated && r.updated < staleCut;
     const tags = [
@@ -352,33 +738,66 @@ details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;te
       stale ? `<span class="tag warn">${r.updated.slice(0,7)} 後沒更新</span>` : "",
     ].join("");
     const bar = r.lvMin != null
-      ? `<div class="lvbar" aria-hidden="true"><div class="me" style="left:${pos(a)};width:${wid(a, b)}"></div><div class="team" style="left:${pos(r.lvMin)};width:${wid(r.lvMin, r.lvMax)}"></div></div><div class="lvcap">${[1,6,10,13].map(v => `<span style="left:${v === 1 ? "0%" : ((v - 0.5) / 18 * 100).toFixed(2) + "%"}">${v}</span>`).join("")}<span style="left:100%">18 級</span></div>`
+      ? `<div class="lv" aria-hidden="true"><div class="lvbar"><div class="me" style="left:${pos(a)};width:${wid(a, b)}"></div><div class="team" style="left:${pos(r.lvMin)};width:${wid(r.lvMin, r.lvMax)}"></div></div><div class="lvcap">${[1,6,10,13].map(v => `<span style="left:${v === 1 ? "0%" : ((v - 0.5) / 18 * 100).toFixed(2) + "%"}">${v}</span>`).join("")}<span style="left:100%">18 級</span></div></div>`
       : "";
-    const updated = r.kind === "weekly" && r.updated ? `・更新 ${r.updated}` : "";
     const srcName = r.src === "pintu" ? "羽球拼圖" : "臨打情報站";
+    const upd = r.kind === "weekly" && r.updated ? `・更新 ${r.updated}` : "";
+    const nx = nextLabel(r), km = distKm(r);
     return `<article class="card fit-${r._fit}">
-      <div class="top"><div class="name"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name || r.place)}</a></div>
-        <button class="star" data-id="${esc(r.id)}" aria-pressed="${fav}" aria-label="${fav ? "取消收藏" : "收藏"}">${fav ? "★" : "☆"}</button></div>
-      <div><span class="when">${esc(when)}</span></div>
-      <div class="sub">${esc(r.place)}・${esc(r.city || "")}${esc(r.area || "")}</div>
+      <div class="c-top">
+        <div class="when"><small>${esc(dayLbl)}</small>${esc(r.start || "")}–${esc(r.end || "")}${nx ? `<span class="next ${nx.cls}">${nx.t}</span>` : ""}</div>
+        <button class="star" data-id="${esc(r.id)}" aria-pressed="${fav}" aria-label="${fav ? "取消收藏" : "收藏"}">${fav ? "★" : "☆"}</button>
+      </div>
+      <div><div class="name"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name || r.place)}</a></div>
+      <div class="place">${esc(r.place)}・${esc(r.city || "")}${esc(r.area || "")}${km != null ? `・<span class="dist">${km < 10 ? km.toFixed(1) : Math.round(km)} km</span>` : ""}</div></div>
       <div class="tags">${tags}</div>
       ${bar}
       ${r.note ? `<div class="note">${esc(r.note)}</div>` : ""}
-      <div class="sub" style="font-size:12px">來源：<a href="${esc(r.url)}" target="_blank" rel="noopener">${srcName}</a>${updated}${r.equip ? "・" + esc(r.equip) : ""}</div>
+      <div class="c-actions">
+        <a class="primary" href="${esc(r.url)}" target="_blank" rel="noopener">看團頁・報名 ↗</a>
+        ${r.lat != null ? `<button type="button" data-map="${esc(r.city + "|" + r.place)}">在地圖上看</button>` : ""}
+        <a href="${gmaps(r)}" target="_blank" rel="noopener">導航 ↗</a>
+      </div>
+      <div class="src">來源：${srcName}${upd}${r.equip ? "・" + esc(r.equip) : ""}</div>
     </article>`;
   }
 
   function renderCards(list) {
     const box = $("cards");
-    if (!list.length) { box.innerHTML = `<div class="empty">沒有符合條件的團。試試把「顯示」多勾幾種，或把「團頁最後更新」改成「不限」。</div>`; $("more").hidden = true; return; }
+    if (!list.length) {
+      box.innerHTML = `<div class="empty">這個條件下沒有團。<div class="acts">
+        ${quick || cell ? `<button class="btn" data-fix="day">看整週</button>` : ""}
+        ${st.q ? `<button class="btn" data-fix="q">清除搜尋「${esc(st.q)}」</button>` : ""}
+        ${st.fits.length < 3 ? `<button class="btn" data-fix="fits">也顯示程度很雜的團</button>` : ""}
+        ${st.fresh !== "0" && st.tab === "weekly" ? `<button class="btn" data-fix="fresh">包含很久沒更新的團</button>` : ""}
+        ${st.regions.length < 4 ? `<button class="btn" data-fix="regions">四個地區都看</button>` : ""}
+      </div></div>`;
+      box.querySelectorAll("[data-fix]").forEach(b => b.addEventListener("click", () => {
+        const f = b.dataset.fix;
+        if (f === "day") { quick = null; cell = null; }
+        if (f === "q") { st.q = ""; $("q").value = ""; }
+        if (f === "fits") st.fits = [...new Set([...st.fits, "great", "ok", "mixed"])];
+        if (f === "fresh") { st.fresh = "0"; $("fresh").value = "0"; }
+        if (f === "regions") st.regions = [...REGIONS];
+        save(); render();
+      }));
+      $("more").hidden = true; return;
+    }
     const slice = list.slice(0, shown);
     let html = "";
-    if (st.tab === "dated" && st.sort === "time") {
+    if (st.sort === "time") {
       let cur = "";
-      slice.forEach(r => { if (r.date !== cur) { cur = r.date; html += `<div class="daygroup" style="grid-column:1/-1">${r.date.slice(5).replace("-","/")}（${DAYS[r.day]}）</div>`; } html += card(r); });
+      slice.forEach(r => {
+        const d = daysUntil(r);
+        const x = new Date(today); x.setDate(x.getDate() + d);
+        const g = `${x.getMonth() + 1}/${x.getDate()} ${DAYS[r.day]}${d === 0 ? "・今天" : d === 1 ? "・明天" : ""}`;
+        if (g !== cur) { cur = g; html += `<div class="daygroup">${g}</div>`; }
+        html += card(r);
+      });
     } else html = slice.map(card).join("");
     box.innerHTML = html;
     $("more").hidden = list.length <= shown;
+    box.querySelectorAll("[data-map]").forEach(b => b.addEventListener("click", () => { focusKey = b.dataset.map; setView("map"); }));
     box.querySelectorAll(".star").forEach(b => b.addEventListener("click", () => {
       const id = b.dataset.id;
       st.favs = st.favs.includes(id) ? st.favs.filter(x => x !== id) : [...st.favs, id];
@@ -386,49 +805,213 @@ details.help td,details.help th{border:1px solid var(--line);padding:4px 10px;te
     }));
   }
 
-  const timeKey = r => (r.kind === "dated" ? r.date : "") + r.day + (r.start || "");
+  const timeKey = r => String(daysUntil(r)).padStart(3, "0") + (r.start || "");
   const sorters = {
     fit: (x, y) => FIT_RANK[x._fit] - FIT_RANK[y._fit] || timeKey(x).localeCompare(timeKey(y)),
     time: (x, y) => timeKey(x).localeCompare(timeKey(y)),
     fee: (x, y) => (x.fee || 9999) - (y.fee || 9999) || timeKey(x).localeCompare(timeKey(y)),
     updated: (x, y) => (y.updated || y.date || "").localeCompare(x.updated || x.date || ""),
+    dist: (x, y) => (distKm(x) ?? 1e9) - (distKm(y) ?? 1e9) || FIT_RANK[x._fit] - FIT_RANK[y._fit],
   };
+
+  // ---------- 地圖 ----------
+  const FITC = {great:"#12805c", ok:"#7aa84a", mixed:"#8c7fc0", weak:"#a8a294", strong:"#c9603a", unk:"#b8b2a4"};
+  const gmaps = r => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.address && r.address.length > 6 ? r.address : `${r.city || ""}${r.place || ""}`);
+  let map = null, layer = null, tiles = null, fitted = false, meMarker = null;
+  const markers = new Map();
+  function initMap() {
+    if (map || !window.L) return;
+    map = L.map("map", {zoomControl: true, scrollWheelZoom: true}).setView([25.03, 121.45], 10);
+    tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, referrerPolicy: "strict-origin-when-cross-origin", className: "osm-tiles",
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> 貢獻者'
+    }).addTo(map);
+    layer = L.markerClusterGroup({showCoverageOnHover: false, maxClusterRadius: 44, spiderfyOnMaxZoom: true});
+    map.addLayer(layer);
+  }
+  function renderMap(list) {
+    if (!window.L) { $("mapNote").textContent = "地圖元件載入失敗，請檢查網路後重新整理。"; return; }
+    initMap();
+    layer.clearLayers(); markers.clear();
+    const venues = new Map();
+    let noGeo = 0;
+    list.forEach(r => {
+      if (r.lat == null) { noGeo++; return; }
+      const k = `${r.city}|${r.place}`;
+      if (!venues.has(k)) venues.set(k, {lat: r.lat, lng: r.lng, geo: r.geo, rows: []});
+      venues.get(k).rows.push(r);
+    });
+    const pts = [];
+    venues.forEach(v => {
+      v.rows.sort((x, y) => FIT_RANK[x._fit] - FIT_RANK[y._fit] || timeKey(x).localeCompare(timeKey(y)));
+      const best = v.rows[0]._fit, n = v.rows.length, size = Math.min(44, 26 + n * 3);
+      const icon = L.divIcon({className: "", html: `<div class="pin${v.geo === "district" ? " approx" : ""}" style="width:${size}px;height:${size}px;background:${FITC[best]}">${n}</div>`, iconSize: [size, size], iconAnchor: [size/2, size/2]});
+      const r0 = v.rows[0];
+      const items = v.rows.map(r => {
+        const dl = r.kind === "dated" ? `${r.date.slice(5).replace("-","/")} ${DAYS[r.day]}` : DAYS[r.day];
+        const lv = r.lvMin != null ? `${r.lvMin}–${r.lvMax} 級` : (r.lvText || "未標");
+        return `<li><span class="w">${esc(dl)}<br>${esc(r.start || "")}</span><span class="i"><span class="dot" style="background:${FITC[r._fit]}"></span><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name || r.place)}</a><div class="m">${esc(lv)}${r.fee ? "・$" + r.fee : ""}・${esc(r.start || "")}–${esc(r.end || "")}</div></span></li>`;
+      }).join("");
+      const html = `<div class="pop"><h5>${esc(r0.place)}</h5><div class="addr">${esc(r0.address || r0.city + r0.area)}</div>${v.geo === "district" ? `<div class="approx">⚠ 找不到精確位置，標在${esc(r0.area || "")}中心</div>` : ""}<ul>${items}</ul><a class="nav" href="${gmaps(r0)}" target="_blank" rel="noopener">Google 地圖導航 ↗</a></div>`;
+      const mk = L.marker([v.lat, v.lng], {icon, title: r0.place}).bindPopup(html, {maxWidth: 320});
+      mk.addTo(layer); markers.set(`${r0.city}|${r0.place}`, mk);
+      pts.push([v.lat, v.lng]);
+    });
+    $("mapNote").innerHTML = `<b>${venues.size}</b> 個場館・${list.length - noGeo} 團` + (noGeo ? `・另有 ${noGeo} 團找不到位置，只在清單裡` : "") + `<br>圓點顏色＝該場館最適合你的團，虛線框＝大概位置`;
+    setTimeout(() => {
+      map.invalidateSize();
+      if (focusKey && markers.has(focusKey)) {
+        const mk = markers.get(focusKey); focusKey = null; fitted = true;
+        layer.zoomToShowLayer(mk, () => mk.openPopup());
+      } else if (pts.length && !fitted) { map.fitBounds(pts, {padding: [30, 30], maxZoom: 14}); fitted = true; }
+      if (myPos) {
+        if (meMarker) meMarker.remove();
+        meMarker = L.circleMarker(myPos, {radius: 9, color: "#fff", weight: 3, fillColor: "#f4c542", fillOpacity: 1}).addTo(map).bindTooltip("你在這裡");
+      }
+    }, 0);
+  }
+  $("locate").addEventListener("click", () => locate(() => { if (map) map.setView(myPos, 14); }));
+  function setView(v) { st.view = v; save(); render(); if (v === "map") $("listTitle").scrollIntoView({behavior: "smooth", block: "start"}); }
+  $("v-list").addEventListener("click", () => setView("list"));
+  $("v-map").addEventListener("click", () => setView("map"));
+  $("navMap").addEventListener("click", e => { e.preventDefault(); setView("map"); });
+
+  // ---------- 深淺色 ----------
+  const THEMES = ["system", "light", "dark"], THEME_ICON = {system: "◐", light: "☀", dark: "☾"}, THEME_TXT = {system: "跟隨系統", light: "淺色", dark: "深色"};
+  let theme = "system";
+  try { theme = localStorage.getItem(KEY + ":theme") || "system"; } catch {}
+  function applyTheme() {
+    if (theme === "system") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = theme;
+    $("themeBtn").textContent = THEME_ICON[theme]; $("themeBtn").title = "目前：" + THEME_TXT[theme];
+  }
+  $("themeBtn").addEventListener("click", () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % 3];
+    try { localStorage.setItem(KEY + ":theme", theme); } catch {}
+    applyTheme(); toast("配色：" + THEME_TXT[theme]);
+  });
+  applyTheme();
+
+  // ---------- 分享、快捷鍵 ----------
+  $("share").addEventListener("click", async () => {
+    const url = location.href.split("#")[0] + "#" + shareHash();
+    try { await navigator.clipboard.writeText(url); toast("連結已複製，傳給球友就是同一組條件"); }
+    catch { prompt("複製這個連結：", url); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "/" && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); $("q").focus(); $("q").scrollIntoView({block: "center", behavior: "smooth"}); }
+  });
+
+  // ---------- 快速日子 ----------
+  function renderQuick(pool) {
+    const n = k => { const old = quick; quick = k; const c = pool.filter(quickMatch).length; quick = old; return c; };
+    const opts = [["", "整週", pool.length], ["today", `今天 ${DAYS[todayIdx]}`, n("today")], ["tomorrow", `明天 ${DAYS[(todayIdx + 1) % 7]}`, n("tomorrow")], ["weekend", "週末", n("weekend")]];
+    $("quick").innerHTML = opts.map(([k, t, c]) => `<button type="button" class="chip" data-q="${k}" aria-pressed="${(quick || "") === k}">${t}<small>${c}</small></button>`).join("")
+      + `<button type="button" class="chip" id="nearBtn" aria-pressed="${st.sort === "dist"}">◎ ${myPos ? "依距離排序" : "我附近"}</button>`;
+    $("quick").querySelectorAll("[data-q]").forEach(b => b.addEventListener("click", () => { quick = b.dataset.q || null; cell = null; shown = 60; render(); }));
+    $("nearBtn").addEventListener("click", () => {
+      const go = () => { st.sort = "dist"; $("sort").value = "dist"; save(); render(); };
+      myPos ? go() : locate(go);
+    });
+  }
+
+  function renderFits(base) {
+    const [a, b] = lvRange();
+    const cnt = {};
+    base.forEach(r => cnt[r._fit] = (cnt[r._fit] || 0) + 1);
+    const tip = {
+      great: `涵蓋 ${a === b ? a : a + "–" + b} 級，而且最低收 ${Math.max(1, a - 2)} 級以上`,
+      ok: `涵蓋你的程度，但也收 ${Math.max(1, a - 3)} 級以下`,
+      mixed: "範圍跨 12 級以上，或只寫「不限」",
+      weak: `團的最高級數不到 ${a} 級`,
+      strong: `團的最低級數超過 ${b} 級`,
+      unk: "團主沒有寫程度",
+    };
+    document.querySelectorAll("#fits .chip").forEach(el => {
+      const k = el.dataset.k;
+      el.querySelector(".cnt").textContent = cnt[k] || 0;
+      el.title = tip[k];
+    });
+    const lv = a === b ? `${a} 級` : `${a}–${b} 級`;
+    $("fitDesc").innerHTML = `以你的 <b>${lv}</b> 來看：<b>很對口</b>＝${esc(tip.great)}；<b>可以打</b>＝${esc(tip.ok)}。`;
+  }
+
+  function renderLevel() {
+    const [a, b] = lvRange();
+    ladder.querySelectorAll(".rung").forEach(el => {
+      const v = +el.dataset.v;
+      el.dataset.on = v >= a && v <= b ? "1" : "0";
+      el.dataset.pick = pick === v ? "1" : "0";
+      el.setAttribute("aria-pressed", v >= a && v <= b);
+    });
+    $("lvShow").innerHTML = `${a === b ? a : `${a}–${b}`}<small>級・${esc(lvName(a, b))}</small>`;
+    $("lvHint").textContent = pick != null ? `已選 ${pick} 級，再點一格設上限（點同一格＝只選這級）` : "點一格設下限，再點一格設上限";
+    $("tiers").innerHTML = LV_NAMES.map(([x, y, t, d]) =>
+      `<div class="tier${y >= a && x <= b ? " me" : ""}"><span class="t">${t}</span><span class="r">${x}–${y}</span><span class="d">${d}</span></div>`).join("");
+  }
 
   function render() {
     document.querySelectorAll("#regions .chip").forEach(b => b.setAttribute("aria-pressed", st.regions.includes(b.dataset.k)));
     document.querySelectorAll("#fits .chip").forEach(b => b.setAttribute("aria-pressed", st.fits.includes(b.dataset.k)));
     ["weekly","dated"].forEach(t => $("tab-"+t).setAttribute("aria-selected", st.tab === t));
     $("freshWrap").hidden = st.tab !== "weekly";
-    const a = Math.min(st.lvA, st.lvB), b = Math.max(st.lvA, st.lvB);
-    $("lvName").textContent = `≈ ${lvName(a, b)}`;
+    renderLevel();
 
-    const base = DATA.rows.filter(baseFilter);
+    const base = DATA.rows.filter(r => baseFilter(r));
     base.forEach(r => r._fit = fitOf(r));
-    renderHeat(base);
-    $("heatTitle").textContent = st.tab === "weekly" ? "一週裡，哪天有適合我的強度（固定團）" : "近期場次：哪天有適合我的強度";
+    const grid = buildGrid(base);
+    renderHeat(grid);
+    renderFits(base);
+    $("heatTitle").textContent = st.tab === "weekly" ? "一週強度地圖" : "近期場次強度地圖";
 
-    let list = base.filter(r => st.fits.includes(r._fit));
+    // Hero 統計（以固定團為準）
+    const wk = DATA.rows.filter(r => baseFilter(r, "weekly"));
+    wk.forEach(r => r._fitW = fitOf(r));
+    const nFit = wk.filter(r => r._fitW === "great" || r._fitW === "ok").length;
+    const nGreat = wk.filter(r => r._fitW === "great").length;
+    $("sFit").innerHTML = `${nFit}<small>團・很對口 ${nGreat}</small>`;
+    const tg = buildGrid(wk.map(r => ({...r, _fit: r._fitW})));
+    const top = topSlot(tg);
+    $("sTop").innerHTML = top ? `${DAYS[top.d]}${top.t}<small>${top.n} 團</small>` : "—";
+
+    const fitted0 = base.filter(r => st.fits.includes(r._fit));
+    renderQuick(fitted0);
+    let list = fitted0.filter(quickMatch);
     if (cell) list = list.filter(r => r.day === cell.d && slotOf(r.start) === cell.s);
     list.sort(sorters[st.sort] || sorters.fit);
     lastList = list;
-    const cellTxt = cell ? `・${DAYS[cell.d]}${SLOTS.find(s => s.k === cell.s).t}` : "";
-    $("listTitle").textContent = `${list.length} 團${cellTxt}`;
+    const qTxt = {today: "今天", tomorrow: "明天", weekend: "週末"}[quick] || "";
+    const cellTxt = (cell || qTxt) ? `<span style="font-size:16px;color:var(--muted);margin-left:8px">${cell ? DAYS[cell.d] + SLOTS.find(s => s.k === cell.s).t : qTxt}</span>` : "";
+    $("listTitle").innerHTML = `<span class="num">${list.length}</span>團${cellTxt}`;
     $("clearCell").hidden = !cell;
-    renderCards(list);
+    const isMap = st.view === "map";
+    $("v-list").setAttribute("aria-pressed", !isMap); $("v-map").setAttribute("aria-pressed", isMap);
+    $("listView").hidden = isMap; $("mapView").hidden = !isMap;
+    $("sort").closest("label").hidden = isMap;
+    if (isMap) renderMap(list); else renderCards(list);
   }
 
-  // ---------- 標頭 ----------
+  // ---------- 資料資訊 ----------
   const c = DATA.counts || {};
-  $("meta").textContent = DATA.generatedAt
-    ? `資料更新：${DATA.generatedAt}・固定團 ${c.weekly ?? 0}・近期場次 ${c.dated ?? 0}`
-    : "還沒有資料，請先執行「更新資料.command」";
-  const days = DATA.generatedAt ? (Date.now() - new Date(DATA.generatedAt.replace(" ", "T"))) / 864e5 : 99;
+  const gen = DATA.generatedAt || "";
+  $("sUpd").innerHTML = gen ? `${gen.slice(5,10).replace("-","/")}<small>${gen.slice(11)}</small>` : "—";
+  $("lead").innerHTML = `整理 <b>${(c.weekly ?? 0).toLocaleString()}</b> 個每週固定團、<b>${c.dated ?? 0}</b> 場近期場次，依你的級數標出哪天、哪個時段有強度對口的團。每天早上自動更新。`;
+  $("year").textContent = new Date().getFullYear();
+  const days = gen ? (Date.now() - new Date(gen.replace(" ", "T") + ":00+08:00")) / 864e5 : 99;
   const warns = [];
-  if (days > 3) warns.push(`資料是 ${Math.floor(days)} 天前抓的，近期場次可能已經過了。雙擊「更新資料.command」更新。`);
+  if (days > 3) warns.push(`資料是 ${Math.floor(days)} 天前更新的，近期場次可能已經過了。`);
   (DATA.errors || []).forEach(e => warns.push("上次更新有來源失敗，沿用舊資料：" + e));
   $("warn").innerHTML = warns.map(w => `<div class="warnbar">${esc(w)}</div>`).join("");
 
   render();
+  // 開場數字往上跳一次
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const el = $("sFit"), m = el.innerHTML.match(/^(\d+)(.*)$/s);
+    if (m) {
+      const target = +m[1], rest = m[2], t0 = performance.now();
+      const step = t => { const k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3); el.innerHTML = Math.round(target * e) + rest; if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }
+  }
 })();
 </script>
 </body>
