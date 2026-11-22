@@ -366,7 +366,7 @@ footer a:hover{color:var(--shuttle)}
     </div>
 
     <div class="stats" aria-live="polite">
-      <div class="stat"><div class="k">適合你的團</div><div class="v" id="sFit">—</div></div>
+      <div class="stat"><div class="k">完全符合的團</div><div class="v" id="sFit">—</div></div>
       <div class="stat"><div class="k">最多的時段</div><div class="v" id="sTop">—</div></div>
       <div class="stat"><div class="k">資料更新</div><div class="v" id="sUpd">—</div></div>
     </div>
@@ -401,11 +401,11 @@ footer a:hover{color:var(--shuttle)}
       <div class="sec-title">
         <div>
           <h2 id="heatTitle">一週強度地圖</h2>
-          <p id="heatSub">格子裡的數字＝很對口＋可以打的團數，點一格只看那個時段</p>
+          <p id="heatSub">格子裡的數字＝「顯示」勾選的團數，點一格只看那個時段</p>
         </div>
         <div class="legend">
-          <span><i style="background:var(--great)"></i>很對口</span>
-          <span><i style="background:var(--ok)"></i>可以打</span>
+          <span><i style="background:var(--great)"></i>完全符合</span>
+          <span><i style="background:var(--ok)"></i>部分重疊</span>
           <span><i style="background:var(--mixed)"></i>程度很雜</span>
           <span><i style="background:var(--weak)"></i>偏弱</span>
           <span><i style="background:var(--strong)"></i>偏強</span>
@@ -457,8 +457,8 @@ footer a:hover{color:var(--shuttle)}
         <div class="panel">
           <h3>以你設定的程度為準</h3>
           <ul class="rules">
-            <li><span class="tag fit great">很對口</span><span>團的範圍有涵蓋你，而且下限不低於「你的下限 − 2」。打起來有強度。</span></li>
-            <li><span class="tag fit ok">可以打</span><span>有涵蓋你，但也收比較弱的人，強度要看當天分組。</span></li>
+            <li><span class="tag fit great">完全符合</span><span>團的程度整個落在你設的範圍裡。你設 10–12 級：10–12、10–11、11–12 都算；1–12、8–12、10–13 都不算。預設只列這種。</span></li>
+            <li><span class="tag fit ok">部分重疊</span><span>有碰到你的程度，但範圍超出去，例如寫 4–12、8–12。預設不列，要看再點「顯示」裡的這一格。</span></li>
             <li><span class="tag fit mixed">程度很雜</span><span>範圍跨 12 級以上（例如 1–18、6–18），或只寫「不限」。</span></li>
             <li><span class="tag fit weak">偏弱</span><span>團的最高級數低於你的下限。</span></li>
             <li><span class="tag fit strong">偏強</span><span>團的最低級數高於你的上限。</span></li>
@@ -520,16 +520,20 @@ footer a:hover{color:var(--shuttle)}
   const SLOTS = [{k:"am",t:"早上",r:"12 點前"},{k:"pm",t:"下午",r:"12–18 點"},{k:"ev",t:"晚上",r:"18 點後"}];
   const REGIONS = ["台北","新北","桃園","中壢"];
   const FITS = [
-    {k:"great",t:"很對口"},{k:"ok",t:"可以打"},{k:"mixed",t:"程度很雜"},
+    {k:"great",t:"完全符合"},{k:"ok",t:"部分重疊"},{k:"mixed",t:"程度很雜"},
     {k:"weak",t:"偏弱"},{k:"strong",t:"偏強"},{k:"unk",t:"沒標程度"}
   ];
   const FIT_RANK = {great:0, ok:1, mixed:2, unk:3, weak:4, strong:5};
   const LV_NAMES = [[1,3,"新手","剛接觸，能來回幾拍"],[4,5,"初級","握拍正確、長球到中後場"],[6,7,"中下","會輪轉，開始會殺、切"],[8,9,"中等","有戰術，球路七成以上準"],[10,12,"中上","球路穩、有攻擊力，臨打圈的上層"],[13,18,"高級","校隊、甲組、選手"]];
 
-  const KEY = "badminton-finder:v1";
-  const defaults = {lvA:10, lvB:12, regions:[...REGIONS], fits:["great","ok"], fresh:"12", feeMax:"", favOnly:false, q:"", tab:"weekly", sort:"fit", favs:[], view:"list"};
+  const KEY = "badminton-finder:v2";
+  const defaults = {lvA:10, lvB:12, regions:[...REGIONS], fits:["great"], fresh:"12", feeMax:"", favOnly:false, q:"", tab:"weekly", sort:"fit", favs:[], view:"list"};
   let st = {...defaults};
-  try { st = {...defaults, ...JSON.parse(localStorage.getItem(KEY) || "{}")}; } catch {}
+  try {
+    const old = localStorage.getItem(KEY) ? null : JSON.parse(localStorage.getItem("badminton-finder:v1") || "null");
+    if (old) { delete old.fits; localStorage.setItem(KEY, JSON.stringify(old)); }  // 規則改成完全符合，舊的顯示設定不沿用
+    st = {...defaults, ...JSON.parse(localStorage.getItem(KEY) || "{}")};
+  } catch {}
   if (typeof st.fresh !== "string") st.fresh = "12";
   let cell = null, shown = 60, pick = null, quick = null, myPos = null, focusKey = null;
   // 網址帶條件：#lv=10-12&r=台北,中壢&t=dated&v=map
@@ -563,7 +567,8 @@ footer a:hover{color:var(--shuttle)}
     if (r.lvMax - r.lvMin >= 12) return "mixed";
     if (r.lvMax < a) return "weak";
     if (r.lvMin > b) return "strong";
-    return r.lvMin >= a - 2 ? "great" : "ok";
+    // 完全符合＝團的範圍整個落在你的範圍裡（10–12 級：10–12、10–11、11–12 算；1–12、8–12、10–13 不算）
+    return r.lvMin >= a && r.lvMax <= b ? "great" : "ok";
   }
   const lvName = (a, b) => LV_NAMES.filter(([x,y]) => y >= a && x <= b).map(n => n[2]).join("～");
 
@@ -633,7 +638,7 @@ footer a:hover{color:var(--shuttle)}
     rows.forEach(r => {
       const f = r._fit, g = grid[r.day], s = slotOf(r.start);
       g.mix[f] = (g.mix[f] || 0) + 1;
-      if (f === "great" || f === "ok") { g[s]++; if (f === "great") g.g[s]++; }
+      if (st.fits.includes(f)) { g[s]++; if (f === "great") g.g[s]++; }
     });
     return grid;
   }
@@ -649,18 +654,18 @@ footer a:hover{color:var(--shuttle)}
     let h = `<tr><th></th>${SLOTS.map(s => `<th>${s.t}<small>${s.r}</small></th>`).join("")}<th class="mixh" style="text-align:left;padding-left:12px">當天強度組成</th></tr>`;
     grid.forEach((g, d) => {
       const allN0 = Object.values(g.mix).reduce((a,b) => a+b, 0);
-      const pct0 = allN0 ? Math.round(((g.mix.great||0)+(g.mix.ok||0))/allN0*100) : 0;
+      const pct0 = allN0 ? Math.round((g.mix.great||0)/allN0*100) : 0;
       h += `<tr><th class="day">${DAYS[d]}<span class="dpct">${pct0}%</span></th>`;
       SLOTS.forEach(s => {
         const n = g[s.k], gr = g.g[s.k];
         const on = cell && cell.d === d && cell.s === s.k;
         const isTop = top && top.d === d && top.s === s.k;
-        h += `<td><button class="cell" data-l="${lvl(n)}" data-top="${isTop ? 1 : 0}" data-d="${d}" data-s="${s.k}" aria-pressed="${on}" aria-label="${DAYS[d]}${s.t}：很對口 ${gr} 團、可以打 ${n-gr} 團"><span class="n">${n}</span><span class="s">${n ? `很對口 ${gr}` : "—"}</span></button></td>`;
+        h += `<td><button class="cell" data-l="${lvl(n)}" data-top="${isTop ? 1 : 0}" data-d="${d}" data-s="${s.k}" aria-pressed="${on}" aria-label="${DAYS[d]}${s.t}：${n} 團，完全符合 ${gr} 團"><span class="n">${n}</span><span class="s">${n ? `完全符合 ${gr}` : "—"}</span></button></td>`;
       });
       const allN = Object.values(g.mix).reduce((a,b) => a+b, 0);
       const bar = ["great","ok","mixed","unk","weak","strong"].map(k => g.mix[k] ? `<span style="width:${g.mix[k]/allN*100}%;background:var(--${k})" title="${FITS.find(f=>f.k===k).t} ${g.mix[k]} 團"></span>` : "").join("");
-      const pct = allN ? Math.round(((g.mix.great||0)+(g.mix.ok||0))/allN*100) : 0;
-      h += `<td class="mixcell"><div class="mix">${bar}</div><div class="mixcap"><b>${pct}%</b> 適合你・共 ${allN} 團</div></td></tr>`;
+      const pct = allN ? Math.round((g.mix.great||0)/allN*100) : 0;
+      h += `<td class="mixcell"><div class="mix">${bar}</div><div class="mixcap"><b>${pct}%</b> 完全符合・共 ${allN} 團</div></td></tr>`;
     });
     $("heat").innerHTML = h;
     $("heat").querySelectorAll(".cell").forEach(b => b.addEventListener("click", () => {
@@ -768,7 +773,7 @@ footer a:hover{color:var(--shuttle)}
       box.innerHTML = `<div class="empty">這個條件下沒有團。<div class="acts">
         ${quick || cell ? `<button class="btn" data-fix="day">看整週</button>` : ""}
         ${st.q ? `<button class="btn" data-fix="q">清除搜尋「${esc(st.q)}」</button>` : ""}
-        ${st.fits.length < 3 ? `<button class="btn" data-fix="fits">也顯示程度很雜的團</button>` : ""}
+        ${!st.fits.includes("ok") ? `<button class="btn" data-fix="fits">也顯示部分重疊的團</button>` : ""}
         ${st.fresh !== "0" && st.tab === "weekly" ? `<button class="btn" data-fix="fresh">包含很久沒更新的團</button>` : ""}
         ${st.regions.length < 4 ? `<button class="btn" data-fix="regions">四個地區都看</button>` : ""}
       </div></div>`;
@@ -776,7 +781,7 @@ footer a:hover{color:var(--shuttle)}
         const f = b.dataset.fix;
         if (f === "day") { quick = null; cell = null; }
         if (f === "q") { st.q = ""; $("q").value = ""; }
-        if (f === "fits") st.fits = [...new Set([...st.fits, "great", "ok", "mixed"])];
+        if (f === "fits") st.fits = [...new Set([...st.fits, "great", "ok"])];
         if (f === "fresh") { st.fresh = "0"; $("fresh").value = "0"; }
         if (f === "regions") st.regions = [...REGIONS];
         save(); render();
@@ -919,8 +924,8 @@ footer a:hover{color:var(--shuttle)}
     const cnt = {};
     base.forEach(r => cnt[r._fit] = (cnt[r._fit] || 0) + 1);
     const tip = {
-      great: `涵蓋 ${a === b ? a : a + "–" + b} 級，而且最低收 ${Math.max(1, a - 2)} 級以上`,
-      ok: `涵蓋你的程度，但也收 ${Math.max(1, a - 3)} 級以下`,
+      great: `團的程度整個落在 ${a === b ? a : a + "–" + b} 級裡面`,
+      ok: `有碰到你的程度，但範圍超出 ${a === b ? a : a + "–" + b} 級（例如 ${Math.max(1, a - 6)}–${b}）`,
       mixed: "範圍跨 12 級以上，或只寫「不限」",
       weak: `團的最高級數不到 ${a} 級`,
       strong: `團的最低級數超過 ${b} 級`,
@@ -932,7 +937,7 @@ footer a:hover{color:var(--shuttle)}
       el.title = tip[k];
     });
     const lv = a === b ? `${a} 級` : `${a}–${b} 級`;
-    $("fitDesc").innerHTML = `以你的 <b>${lv}</b> 來看：<b>很對口</b>＝${esc(tip.great)}；<b>可以打</b>＝${esc(tip.ok)}。`;
+    $("fitDesc").innerHTML = `以你的 <b>${lv}</b> 來看：<b>完全符合</b>＝${esc(tip.great)}；<b>部分重疊</b>＝${esc(tip.ok)}，預設不列。`;
   }
 
   function renderLevel() {
@@ -966,9 +971,9 @@ footer a:hover{color:var(--shuttle)}
     // Hero 統計（以固定團為準）
     const wk = DATA.rows.filter(r => baseFilter(r, "weekly"));
     wk.forEach(r => r._fitW = fitOf(r));
-    const nFit = wk.filter(r => r._fitW === "great" || r._fitW === "ok").length;
-    const nGreat = wk.filter(r => r._fitW === "great").length;
-    $("sFit").innerHTML = `${nFit}<small>團・很對口 ${nGreat}</small>`;
+    const nFit = wk.filter(r => r._fitW === "great").length;
+    const nOk = wk.filter(r => r._fitW === "ok").length;
+    $("sFit").innerHTML = `${nFit}<small>團・部分重疊 ${nOk}</small>`;
     const tg = buildGrid(wk.map(r => ({...r, _fit: r._fitW})));
     const top = topSlot(tg);
     $("sTop").innerHTML = top ? `${DAYS[top.d]}${top.t}<small>${top.n} 團</small>` : "—";
