@@ -301,6 +301,54 @@ table.heat{border-collapse:separate;border-spacing:5px;width:100%;min-width:600p
 @media (max-width:900px){.flyer{display:none}}
 @media (prefers-reduced-motion:reduce){.flyer{display:none}}
 
+/* 臉書社團 */
+.fb{margin:72px 0 0}
+.fb-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.fb-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.fb-grid{grid-template-columns:1fr}}
+.fb-card{padding:18px;display:flex;flex-direction:column;gap:8px}
+.fb-card h3{margin:0;font-size:20px;font-weight:900;display:flex;align-items:baseline;gap:8px}
+.fb-card h3 small{font-family:var(--num);font-size:13px;font-weight:600;color:var(--muted)}
+.fb-card.off{opacity:.55}
+.fb .fb-card a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);font-size:14px;transition:border-color .15s,color .15s}
+.fb .fb-card a:hover{border-color:var(--great);color:var(--great)}
+.fb .fb-card a span{color:var(--muted);font-size:12px;white-space:nowrap}
+.fb-tips{margin:14px 0 0;padding:16px 18px;font-size:13.5px;line-height:1.75;color:var(--muted)}
+.fb-tips b{color:var(--ink)}
+.fb-tips ol{margin:6px 0 0;padding-left:1.3em}
+
+/* 全站搜尋 */
+.gs-btn{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);border-radius:999px;padding:6px 10px 6px 12px;font-size:13.5px;cursor:pointer;font-family:inherit;margin-right:4px}
+.gs-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.gs-btn .k{font-family:var(--num);font-size:11.5px;border:1px solid rgba(255,255,255,.3);border-radius:5px;padding:0 5px;color:rgba(255,255,255,.7)}
+@media (max-width:640px){.gs-btn .t,.gs-btn .k{display:none}.gs-btn{padding:6px 10px}}
+dialog.gs{width:min(720px,calc(100vw - 24px));max-height:min(82vh,760px);padding:0;border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.35);margin:8vh auto auto;overflow:hidden}
+dialog.gs[open]{display:flex;flex-direction:column}
+dialog.gs::backdrop{background:rgba(6,20,15,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.gs-top{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.gs-top input{flex:1;border:0;outline:0;background:transparent;color:var(--ink);font-size:17px;font-family:inherit;padding:6px 4px 6px 30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%23889' stroke-width='2'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='M12.5 12.5l4 4'/%3E%3C/svg%3E") 2px 50% no-repeat}
+.gs-top .x{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;font-family:inherit}
+.gs-scope{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted);align-items:center}
+.gs-scope button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.gs-scope button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.gs-body{overflow:auto;padding:6px 8px 12px;overscroll-behavior:contain}
+.gs-group{margin:10px 8px 4px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;display:flex;justify-content:space-between}
+.gs-item{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);padding:9px 10px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px}
+.gs-item[aria-selected="true"],.gs-item:hover{background:var(--chip)}
+.gs-item .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--chip);font-size:14px}
+.gs-item[aria-selected="true"] .ic{background:var(--panel)}
+.gs-item .ic.great{background:var(--great);color:#fff}.gs-item .ic.ok{background:var(--ok);color:#fff}.gs-item .ic.mixed{background:var(--mixed);color:#fff}.gs-item .ic.strong{background:var(--strong);color:#fff}
+.gs-item .m{min-width:0}
+.gs-item .t1{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-item .t2{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-item .r{font-family:var(--num);font-size:13px;color:var(--muted);white-space:nowrap;text-align:right}
+.gs-item mark{background:rgba(244,197,66,.45);color:inherit;border-radius:3px;padding:0 1px}
+.gs-detail{padding:4px 6px 8px}
+.gs-detail .card{animation:none;box-shadow:none}
+.gs-empty{padding:28px 16px;text-align:center;color:var(--muted);font-size:14px;line-height:1.8}
+.gs-hint{display:flex;gap:14px;flex-wrap:wrap;padding:8px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+@media (max-width:560px){dialog.gs{margin:0 auto auto;width:100vw;max-height:100dvh;height:100dvh;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px)}.gs-hint{display:none}.gs-item .r{display:none}}
+
 /* 怎麼算 */
 .how{margin:72px 0 0}
 .how-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
@@ -348,8 +396,10 @@ footer a:hover{color:var(--shuttle)}
       羽球找團
     </a>
     <nav class="nav" aria-label="主選單">
+      <button class="gs-btn" id="gsBtn" type="button" aria-haspopup="dialog" aria-label="搜尋全站">🔍<span class="t">搜尋全站</span><span class="k" id="gsKey">⌘K</span></button>
       <a href="#find">找團</a>
       <a href="#listTitle" id="navMap" class="hide-sm">地圖</a>
+      <a href="#fb" class="hide-sm">臉書社團</a>
       <a href="#how" class="hide-sm">怎麼算</a>
       <a href="#data" class="hide-sm">資料來源</a>
       <button class="theme-btn" id="themeBtn" type="button" aria-label="切換深淺色" title="切換深淺色">◐</button>
@@ -473,6 +523,19 @@ footer a:hover{color:var(--shuttle)}
       </div>
     </div>
 
+    <section class="fb" id="fb">
+      <div class="sec-title"><div><h2>到臉書社團找更多</h2><p>很多團只在 FB 社團、LINE 社群發文，這裡抓不到。點下面的連結，直接在臉書搜尋各地的羽球社團（要先登入臉書）。</p></div></div>
+      <div class="fb-grid" id="fbGrid"></div>
+      <div class="panel fb-tips">
+        <b>加入社團後，怎麼找到程度合的團</b>
+        <ol>
+          <li>在社團頁按放大鏡，搜尋 <b id="fbLv">10級</b>、<b>中上</b>、<b>臨打</b>，或場館名稱。</li>
+          <li>排序選「最新」，只看這一兩週的貼文，舊的多半已經額滿。</li>
+          <li>貼文寫「1–12 級」「不限」的團，程度通常很雜；要強度就找寫得窄的，例如「10–12 級」。</li>
+        </ol>
+      </div>
+    </section>
+
     <section class="how" id="how">
       <div class="sec-title"><div><h2>適合度怎麼算</h2><p>台灣臨打常用台灣羽球推廣協會的 18 級分級表</p></div></div>
       <div class="how-grid">
@@ -535,6 +598,15 @@ footer a:hover{color:var(--shuttle)}
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="gs" id="gs" aria-label="搜尋全站">
+  <div class="gs-top">
+    <input id="gsQ" type="search" placeholder="團名、場館、區、星期、級數、備註…（例：中壢 週六 10級）" autocomplete="off" aria-controls="gsBody" aria-label="搜尋全站">
+    <button class="x" id="gsClose" type="button">Esc</button>
+  </div>
+  <div class="gs-scope" id="gsScope"></div>
+  <div class="gs-body" id="gsBody" role="listbox" aria-label="搜尋結果"></div>
+  <div class="gs-hint"><span>↑↓ 移動</span><span>Enter 打開</span><span>Esc 關閉</span><span>不受上面的篩選條件影響，所有資料都搜得到</span></div>
+</dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
@@ -932,6 +1004,194 @@ footer a:hover{color:var(--shuttle)}
     if (e.key === "/" && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); $("q").focus(); $("q").scrollIntoView({block: "center", behavior: "smooth"}); }
   });
 
+
+  // ---------- 全站搜尋 ----------
+  const gs = $("gs"), gsQ = $("gsQ"), gsBody = $("gsBody");
+  let gsSel = 0, gsItems = [], gsOpen = null, gsScope = "all";
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  $("gsKey").textContent = isMac ? "⌘K" : "Ctrl K";
+  const norm = x => String(x ?? "").toLowerCase().replace(/臺/g, "台").replace(/[－—–~～]/g, "-");
+  const SECTIONS = [
+    {t: "篩選條件", d: "地區、顯示、費用、收藏", go: "#find", kw: "篩選 地區 費用 收藏 條件 find"},
+    {t: "一週強度地圖", d: "星期 × 時段熱度表", go: "#heatTitle", kw: "熱度 強度 時段 星期 heat"},
+    {t: "級數分布", d: "每一級有幾團收、常見的程度寫法", go: "dist", kw: "級數 分布 程度 統計 distribution"},
+    {t: "地圖", d: "場館位置、我附近", go: "map", kw: "地圖 位置 附近 map"},
+    {t: "到臉書社團找更多", d: "各地羽球社團搜尋連結", go: "#fb", kw: "臉書 fb facebook 社團 line"},
+    {t: "適合度怎麼算", d: "18 級分級對照、完全符合的規則", go: "#how", kw: "怎麼算 分級 規則 適合度 完全符合 部分重疊"},
+    {t: "資料來源與致謝", d: "羽球拼圖、臨打情報站、OpenStreetMap", go: "#data", kw: "資料 來源 致謝 版權 下架 data"},
+  ];
+  const DAYW = {"週一":0,"週二":1,"週三":2,"週四":3,"週五":4,"週六":5,"週日":6,"星期一":0,"星期二":1,"星期三":2,"星期四":3,"星期五":4,"星期六":5,"星期日":6,"禮拜一":0,"禮拜二":1,"禮拜三":2,"禮拜四":3,"禮拜五":4,"禮拜六":5,"禮拜日":6,"週天":6,"禮拜天":6,"星期天":6};
+  const hayOf = r => r._hay || (r._hay = norm(`${r.name} ${r.place} ${r.city} ${r.area} ${r.region} ${r.address} ${r.note} ${r.lvText} ${r.ball || ""} ${r.equip || ""}`));
+  function tokens(q) {
+    return norm(q).split(/\s+/).filter(Boolean).map(t => {
+      let m;
+      if ((m = t.match(/^(\d{1,2})-(\d{1,2})級?$/))) return {lv: [+m[1], +m[2]], raw: t};
+      if ((m = t.match(/^(\d{1,2})級$/))) return {lv: [+m[1], +m[1]], raw: t};
+      if (t in DAYW) return {day: DAYW[t], raw: t};
+      if (["早上","上午"].includes(t)) return {slot: "am", raw: t};
+      if (t === "下午") return {slot: "pm", raw: t};
+      if (["晚上","夜間"].includes(t)) return {slot: "ev", raw: t};
+      if (["今天","明天"].includes(t)) return {rel: t === "今天" ? 0 : 1, raw: t};
+      return {s: t, raw: t};
+    });
+  }
+  function matchRow(r, toks) {
+    let score = 0;
+    for (const k of toks) {
+      if (k.lv) { if (r.lvMin == null || r.lvMin > k.lv[0] || r.lvMax < k.lv[1]) return -1; score += 2; continue; }
+      if (k.day != null) { if (r.day !== k.day) return -1; continue; }
+      if (k.slot) { if (slotOf(r.start) !== k.slot) return -1; continue; }
+      if (k.rel != null) { if (daysUntil(r) !== k.rel) return -1; continue; }
+      const h = hayOf(r); if (!h.includes(k.s)) return -1;
+      const nm = norm(r.name), pl = norm(r.place);
+      score += nm.startsWith(k.s) ? 6 : nm.includes(k.s) ? 4 : pl.includes(k.s) ? 3 : norm(r.area).includes(k.s) ? 2 : 1;
+    }
+    return score;
+  }
+  const hl = (txt, toks) => {
+    let out = esc(txt);
+    toks.filter(k => k.s && k.s.length).forEach(k => {
+      const re = new RegExp(k.s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+      out = out.replace(re, m => `<mark>${m}</mark>`);
+    });
+    return out;
+  };
+  function gsRender() {
+    const q = gsQ.value.trim(), toks = tokens(q);
+    $("gsScope").innerHTML = `範圍` + [["all","全部"],["weekly","每週固定團"],["dated","近期場次"],["venue","場館"],["page","頁面"]]
+      .map(([k, t]) => `<button type="button" data-k="${k}" aria-pressed="${gsScope === k}">${t}</button>`).join("");
+    $("gsScope").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { gsScope = b.dataset.k; gsSel = 0; gsOpen = null; gsRender(); gsQ.focus(); }));
+    gsItems = [];
+    let h = "";
+    const want = k => gsScope === "all" || gsScope === k;
+    // 頁面區塊
+    const secs = want("page") ? SECTIONS.filter(x => !q || toks.every(k => k.s && norm(x.t + " " + x.d + " " + x.kw).includes(k.s))) : [];
+    // 團
+    const teams = [];
+    if (q && (want("weekly") || want("dated"))) {
+      DATA.rows.forEach(r => {
+        if (!want(r.kind) && gsScope !== "all") return;
+        const sc = matchRow(r, toks);
+        if (sc >= 0) { r._fit = fitOf(r); teams.push([sc + (r._fit === "great" ? 1.5 : r._fit === "ok" ? .5 : 0), r]); }
+      });
+      teams.sort((x, y) => y[0] - x[0] || timeKey(x[1]).localeCompare(timeKey(y[1])));
+    }
+    // 場館與行政區
+    const venues = new Map(), areas = new Map();
+    if (q && want("venue")) {
+      const st0 = toks.filter(k => k.s);
+      if (st0.length === toks.length) DATA.rows.forEach(r => {
+        const vk = r.city + "|" + r.place, vh = norm(`${r.place} ${r.city} ${r.area} ${r.address}`);
+        if (st0.every(k => vh.includes(k.s))) { const v = venues.get(vk) || {r, n: 0, w: 0}; v.n++; if (r.kind === "weekly") v.w++; venues.set(vk, v); }
+        const ak = r.city + r.area;
+        if (r.area && st0.every(k => norm(ak + r.region).includes(k.s))) areas.set(ak, (areas.get(ak) || 0) + 1);
+      });
+    }
+    const push = (html, act) => { const i = gsItems.length; gsItems.push(act); return html.replace("data-i", `data-i="${i}" id="gs-${i}" role="option" aria-selected="${i === gsSel}"`); };
+    if (areas.size) {
+      h += `<div class="gs-group"><span>行政區</span></div>`;
+      [...areas].sort((a, b) => b[1] - a[1]).slice(0, 4).forEach(([ak, n]) => {
+        h += push(`<button class="gs-item" data-i type="button"><span class="ic">📍</span><span class="m"><div class="t1">${hl(ak, toks)}</div><div class="t2">把清單篩成這一區</div></span><span class="r">${n} 團</span></button>`, {area: ak});
+      });
+    }
+    if (venues.size) {
+      const vs = [...venues.values()].sort((a, b) => b.n - a.n);
+      h += `<div class="gs-group"><span>場館</span><span>${vs.length}</span></div>`;
+      vs.slice(0, gsScope === "venue" ? 40 : 5).forEach(v => {
+        const r = v.r;
+        h += push(`<button class="gs-item" data-i type="button"><span class="ic">🏸</span><span class="m"><div class="t1">${hl(r.place, toks)}</div><div class="t2">${esc(r.city + (r.area || ""))}${r.lat == null ? "・沒有座標" : ""}</div></span><span class="r">${v.n} 團</span></button>`, {venue: r});
+      });
+    }
+    if (teams.length) {
+      const lim = gsScope === "all" ? 30 : 80;
+      h += `<div class="gs-group"><span>團</span><span>${teams.length > lim ? `前 ${lim}／` : ""}${teams.length} 團</span></div>`;
+      teams.slice(0, lim).forEach(([, r]) => {
+        const fit = FITS.find(f => f.k === r._fit);
+        const dl = r.kind === "dated" ? `${r.date.slice(5).replace("-","/")} ${DAYS[r.day]}` : `每${DAYS[r.day]}`;
+        const lv = r.lvMin != null ? `${r.lvMin}–${r.lvMax} 級` : (r.lvText || "未標程度");
+        const i = gsItems.length;
+        h += push(`<button class="gs-item" data-i type="button" title="${fit.t}"><span class="ic ${r._fit}">${r.lvMin != null ? r.lvMin : "?"}</span><span class="m"><div class="t1">${hl(r.name || r.place, toks)}</div><div class="t2">${dl} ${esc(r.start || "")}・${hl(r.place, toks)}・${esc(r.region)}</div></span><span class="r">${esc(lv)}<br>${fit.t}</span></button>`, {team: r});
+        if (gsOpen === r.id) h += `<div class="gs-detail">${card(r)}</div>`;
+      });
+    }
+    if (secs.length) {
+      h += `<div class="gs-group"><span>頁面</span></div>`;
+      secs.forEach(x => { h += push(`<button class="gs-item" data-i type="button"><span class="ic">↪</span><span class="m"><div class="t1">${hl(x.t, toks)}</div><div class="t2">${esc(x.d)}</div></span><span class="r"></span></button>`, {sec: x}); });
+    }
+    if (!gsItems.length) h = q
+      ? `<div class="gs-empty">找不到「${esc(q)}」。<br>試試場館名、區名（例：板橋）、<b>週六 晚上</b>、<b>10級</b>、<b>8-12</b>。</div>`
+      : `<div class="gs-empty">搜尋所有團、場館、行政區，不受篩選條件影響。<br>可以組合關鍵字：<b>中壢 週六</b>、<b>台北 晚上 10級</b>、<b>今天 新莊</b>。</div>`;
+    gsBody.innerHTML = h;
+    gsSel = Math.min(gsSel, Math.max(0, gsItems.length - 1));
+    gsBody.querySelectorAll(".gs-item").forEach(b => {
+      b.addEventListener("click", () => { gsSel = +b.dataset.i; gsAct(); });
+      b.addEventListener("mousemove", () => { if (gsSel !== +b.dataset.i) { gsSel = +b.dataset.i; gsMark(); } });
+    });
+    gsBody.querySelectorAll("[data-map]").forEach(b => b.addEventListener("click", () => {
+      const r = gsItems.find(x => x.team && x.team.id === gsOpen)?.team; if (r) gsShowOnMap(r);
+    }));
+    gsBody.querySelectorAll(".gs-detail .star").forEach(b => b.addEventListener("click", () => {
+      const id = b.dataset.id; st.favs = st.favs.includes(id) ? st.favs.filter(x => x !== id) : [...st.favs, id]; save(); render(); gsRender();
+    }));
+  }
+  function gsMark() {
+    gsBody.querySelectorAll(".gs-item").forEach(b => b.setAttribute("aria-selected", +b.dataset.i === gsSel));
+    const el = $("gs-" + gsSel); if (el) { el.scrollIntoView({block: "nearest"}); gsQ.setAttribute("aria-activedescendant", "gs-" + gsSel); }
+  }
+  // 讓這一團一定出現在清單／地圖上：切到它的分頁、加回它的地區與適合度
+  function gsReveal(r) {
+    st.tab = r.kind; if (!st.regions.includes(r.region)) st.regions = [...st.regions, r.region];
+    const f = fitOf(r); if (!st.fits.includes(f)) st.fits = [...st.fits, f];
+    if (st.tab === "weekly" && st.fresh !== "0" && r.updated && r.updated < monthsAgo(+st.fresh)) st.fresh = "0";
+    st.favOnly = false; quick = null; cell = null; shown = 60;
+    try { $("fresh").value = st.fresh; $("favOnly").checked = false; } catch {}
+  }
+  function gsShowOnMap(r) {
+    gsReveal(r); st.q = ""; $("q").value = ""; focusKey = r.city + "|" + r.place; gsClose(); setView("map");
+    toast("已切到地圖，並調整篩選讓這個場館看得到");
+  }
+  function gsAct() {
+    const it = gsItems[gsSel]; if (!it) return;
+    if (it.team) { gsOpen = gsOpen === it.team.id ? null : it.team.id; gsRender(); gsMark(); return; }
+    if (it.venue) {
+      const r = it.venue; gsClose();
+      st.regions = [...REGIONS]; st.q = r.place; $("q").value = r.place; quick = null; cell = null; shown = 60;
+      if (!st.fits.includes("ok")) st.fits = [...new Set([...st.fits, "great", "ok", "mixed", "unk"])];
+      save(); render(); $("listTitle").scrollIntoView({behavior: "smooth", block: "start"});
+      toast(`清單只看「${r.place}」，也打開了部分重疊、程度很雜的團`); return;
+    }
+    if (it.area) {
+      gsClose(); st.regions = [...REGIONS]; st.q = it.area.slice(3); $("q").value = st.q; quick = null; cell = null; shown = 60;
+      save(); render(); $("listTitle").scrollIntoView({behavior: "smooth", block: "start"}); toast(`清單只看${it.area}`); return;
+    }
+    if (it.sec) {
+      gsClose(); const g = it.sec.go;
+      if (g === "dist") { st.dist = true; save(); render(); $("ladder").scrollIntoView({behavior: "smooth", block: "center"}); }
+      else if (g === "map") setView("map");
+      else document.querySelector(g)?.scrollIntoView({behavior: "smooth", block: "start"});
+    }
+  }
+  function gsShow() {
+    if (gs.open) return;
+    gsOpen = null; gsSel = 0; gs.showModal(); gsQ.select(); gsRender();
+    document.documentElement.style.overflow = "hidden";
+  }
+  function gsClose() { if (gs.open) gs.close(); }
+  gs.addEventListener("close", () => { document.documentElement.style.overflow = ""; });
+  gs.addEventListener("click", e => { if (e.target === gs) gsClose(); });
+  $("gsBtn").addEventListener("click", gsShow);
+  $("gsClose").addEventListener("click", gsClose);
+  let gsT = null;
+  gsQ.addEventListener("input", () => { clearTimeout(gsT); gsT = setTimeout(() => { gsSel = 0; gsOpen = null; gsRender(); }, 90); });
+  gsQ.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") { e.preventDefault(); gsSel = Math.min(gsItems.length - 1, gsSel + 1); gsMark(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); gsSel = Math.max(0, gsSel - 1); gsMark(); }
+    else if (e.key === "Enter") { e.preventDefault(); gsAct(); }
+  });
+  document.addEventListener("keydown", e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); gs.open ? gsClose() : gsShow(); }
+  });
+
   // ---------- 快速日子 ----------
   function renderQuick(pool) {
     const n = k => { const old = quick; quick = k; const c = pool.filter(quickMatch).length; quick = old; return c; };
@@ -1001,6 +1261,22 @@ footer a:hover{color:var(--shuttle)}
   $("distBtn").addEventListener("click", () => { st.dist = !st.dist; save(); render(); });
   $("sFitBox").addEventListener("click", () => { st.dist = true; save(); render(); $("ladder").scrollIntoView({behavior: "smooth", block: "center"}); });
 
+  // ---------- 臉書社團搜尋連結 ----------
+  const FB_WORDS = [["羽球 臨打", "臨打團"], ["羽球 零打", "零打團"], ["羽球 揪團", "揪團"]];
+  function renderFb() {
+    const [a, b] = lvRange();
+    $("fbLv").textContent = `${a === b ? a : a + "級"}${a === b ? "級" : `、${b}級`}`;
+    const order = [...REGIONS].sort((x, y) => st.regions.includes(y) - st.regions.includes(x));
+    $("fbGrid").innerHTML = order.map(rg => {
+      const n = DATA.rows.filter(r => r.region === rg).length;
+      const links = FB_WORDS.map(([w, t]) => {
+        const q = `${rg} ${w}`;
+        return `<a href="https://www.facebook.com/search/groups/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener noreferrer">搜「${esc(q)}」<span>${t} ↗</span></a>`;
+      }).join("");
+      return `<div class="panel fb-card${st.regions.includes(rg) ? "" : " off"}"><h3>${rg}<small>這裡已有 ${n} 團</small></h3>${links}</div>`;
+    }).join("");
+  }
+
   function renderLevel() {
     const [a, b] = lvRange();
     ladder.querySelectorAll(".rung").forEach(el => {
@@ -1028,6 +1304,7 @@ footer a:hover{color:var(--shuttle)}
     renderHeat(grid);
     renderFits(base);
     renderDist(base);
+    renderFb();
     $("heatTitle").textContent = st.tab === "weekly" ? "一週強度地圖" : "近期場次強度地圖";
 
     // Hero 統計（以固定團為準）
